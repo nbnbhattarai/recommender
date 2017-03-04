@@ -1,0 +1,18 @@
+#+TITLE: TODO FOR Major Projct Till Mid-Term
+#+DATE:<2017-03-04 Sat> 
+
+* Major Project (Music Recommender) For Mid-term
+** TODO Design User Data Model
+   SCHEDULED: <2017-03-08 Wed>
+   User Data Model represents a facebook user completely.
+   This model is used by recommender system for recommendation.
+   Contains data types, relations etc...
+   *** Tasks
+   1. Complete data structure used in facebook
+   2. Relations representation
+** TODO User Data Extraction from facebook
+   SCHEDULED: <2017-03-12 Sun>
+   Get user's data from facebook using facebook API(graph API)
+
+
+** To use this file, use org-mode in emacs.
