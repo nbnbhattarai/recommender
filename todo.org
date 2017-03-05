@@ -5,17 +5,22 @@
 
 ** DONE Collect the dataSet from myPersonality DataSet.
    DEADLINE: <2017-03-05 Sun>
-** TODO Design User Data Model[0/2]
-   SCHEDULED: <2017-03-15 Wed>
+** TODO Design User Data Model[1/5]
+   DEADLINE: <2017-03-15 Wed>
    User Data Model represents a facebook user completely.
    This model is used by recommender system for recommendation.
    Contains data personality predicted from the dataSet. 
    *** Tasks
-   1. [ ] Predict the personality of the facebook users.
+   1. [ ] Study the dataSet.
+      <2017-03-07 Tue>
    2. [ ] Develop Naive Bayes for Classification.
-   3. [ ] Develop the model(matrix) for recommendation and ranking.
-   4. [ ] Use SVD for developed matrix model for ranking.
-
+      <2017-03-11 Sat>
+   3. [ ] Predict the personality of the facebook users.
+      <2017-03-13 Mon>
+   4. [ ] Develop the model(matrix) for recommendation and ranking.
+      <2017-03-14 Tue>
+   5. [ ] Use SVD for developed matrix model for ranking.
+      <2017-03-15 Wed>
 ** TODO User Data Extraction from facebook and testing[0/2]
    SCHEDULED: <2017-03-26 Sun>
    1. [ ] Get user's data from facebook using facebook API(graph API)
