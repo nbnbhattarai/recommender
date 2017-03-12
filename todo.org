@@ -6,15 +6,15 @@
 
 ** DONE Collect the dataSet from myPersonality DataSet.
    DEADLINE: <2017-03-05 Sun>
-** TODO Design User Data Model[1/6]
-   DEADLINE: <2017-03-15 Wed>
+** TODO Design User Data Model[2/6]
    User Data Model represents a facebook user completely.
    This model is used by recommender system for recommendation.
    Contains data personality predicted from the dataSet. 
    *** Tasks
+   DEADLINE: <2017-03-15 WED>
    1) [X] Study the dataSet.
       <2017-03-07 Tue>
-   2) [ ] Feature Extraction 
+   2) [X] Feature Extraction 
       <2017-03-11 Sat>
    3) [ ] Develop Naive Bayes for Classification.
       <2017-03-11 Sat>
