@@ -7,7 +7,7 @@ import math
     3. Extraversion
     4. Agreeableness
     5. Neuroticism
-    '''
+ '''
 class NaiveBayes: #Classification algorithm for personality identification based on big 5 traits
     oStatus = []
     cStatus = []
@@ -114,6 +114,15 @@ class NaiveBayes: #Classification algorithm for personality identification based
            if i not in dict4:
                dict4[i] = 0
        return dict1,dict2,dict3,dict4
+
+    def caclulate():
+       pass
+   
+    def classify():
+       pass
+
+    def test():
+       pass
 if __name__=="__main__":
     try:
         naivebayes = NaiveBayes()
