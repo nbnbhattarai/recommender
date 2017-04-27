@@ -210,15 +210,15 @@ class NaiveBayes: #Classification algorithm for personality identification based
         agreebleness = math.modf(math.log(ap))[0] * -1
         conscientiouness  = math.modf(math.log(cp))[0] * -1
         openness = math.modf(math.log(op))[0] * -1
-        if extraversion >= 0.8:
+        if extraversion >= 0.5:
             verdict += "Extraversion "
-        if neuroticism >= 0.8:
+        if neuroticism >= 0.5:
             verdict += "Neuroticism "
-        if agreebleness >= 0.8:
+        if agreebleness >= 0.5:
             verdict += "Agreebleness "
-        if conscientiouness >= 0.8:
+        if conscientiouness >= 0.5:
             verdict += "Conscientiousness"
-        if openness >= 0.8:
+        if openness >= 0.5:
             verdict += "Openness"
         return verdict
     def test(self,file):
@@ -250,19 +250,19 @@ class NaiveBayes: #Classification algorithm for personality identification based
                             countT += 1
                             totalCount += 1
 
-                        if row['cEXT'] == 'n' and j != "Extraversion" :
+                        if row['cEXT'] == 'n' and j not in verdict :
                             countF += 1
                             totalCount += 1
-                        if row['cNEU'] == 'n' and j != "Neuroticism" :
+                        if row['cNEU'] == 'n' and j not in verdict :
                             countF += 1
                             totalCount += 1
-                        if row['cAGR'] == 'n' and j != "Agreeableness" :
+                        if row['cAGR'] == 'n' and j not in verdict :
                             countF += 1
                             totalCount += 1
-                        if row['cCON'] == 'n' and j != "Conscientiousness" :
+                        if row['cCON'] == 'n' and j not in verdict :
                             countF += 1
                             totalCount += 1
-                        if row['cOPN'] == 'n' and j != "Openness" :
+                        if row['cOPN'] == 'n' and j not in verdict :
                             countF += 1
                             totalCount += 1
                         
