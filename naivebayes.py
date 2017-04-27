@@ -274,8 +274,17 @@ class NaiveBayes: #Classification algorithm for personality identification based
 if __name__=="__main__":
     try:
         naivebayes = NaiveBayes()
-        naivebayes.train('dataSet/mypersonality_final/mypersonality_final.csv')
-        naivebayes.test('test.csv')
+        #naivebayes.train('dataSet/mypersonality_final/mypersonality_final.csv')
+        naivebayes.train('trainSet.csv')
+        naivebayes.test('testSet.csv')
+        naivebayes.train('trainSet2.csv')
+        naivebayes.test('testSet2.csv')
+        naivebayes.train('trainSet3.csv')
+        naivebayes.test('testSet3.csv')
+        naivebayes.train('trainSet4.csv')
+        naivebayes.test('testSet4.csv')
+        naivebayes.train('trainSet5.csv')
+        naivebayes.test('testSet5.csv')
         naivebayes.classify("desires the thrill of inspiration. Also, money")
     except FileNotFoundError:
         print("Training file unavailable")
