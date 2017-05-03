@@ -274,10 +274,10 @@ class NaiveBayes: #Classification algorithm for personality identification based
 if __name__=="__main__":
     try:
         naivebayes = NaiveBayes()
-        naivebayes.train('dataSet/mypersonality_final/mypersonality_final.csv')
-        '''
-        naivebayes.train('trainSet.csv')
-        naivebayes.test('testSet.csv')
+        #naivebayes.train('dataSet/mypersonality_final/mypersonality_final.csv')
+        
+        naivebayes.train('trainSet1.csv')
+        naivebayes.test('testSet1.csv')
         naivebayes.train('trainSet2.csv')
         naivebayes.test('testSet2.csv')
         naivebayes.train('trainSet3.csv')
@@ -286,7 +286,7 @@ if __name__=="__main__":
         naivebayes.test('testSet4.csv')
         naivebayes.train('trainSet5.csv')
         naivebayes.test('testSet5.csv')
-        '''
+        
         toclassify = input("Enter the string to classify:")
         print(naivebayes.classify(toclassify))
         
