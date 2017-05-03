@@ -56,7 +56,7 @@ class NaiveBayes: #Classification algorithm for personality identification based
         #Calculate likelihood
         #Using Hash Table
         self.hTable = self.generateHash(self.eStatus,self.nStatus,self.aStatus,self.cStatus,self.oStatus,self.megaStatus) 
-        print(pd.DataFrame(self.hTable))
+        #print(pd.DataFrame(self.hTable))
         #status = ((self.megaStatus[0])).split()
         #print(len(status))
     def calculatePrior(self,eStatus,nStatus,aStatus,cStatus,oStatus,megaStatus):
@@ -274,9 +274,9 @@ class NaiveBayes: #Classification algorithm for personality identification based
 if __name__=="__main__":
     try:
         naivebayes = NaiveBayes()
-        naivebayes.train('dataSet/mypersonality_final/mypersonality_final.csv')
+        #naivebayes.train('dataSet/mypersonality_final/mypersonality_final.csv')
+
         
-        '''
         naivebayes.train('trainSet1.csv')
         naivebayes.test('testSet1.csv')
         naivebayes.train('trainSet2.csv')
@@ -287,7 +287,6 @@ if __name__=="__main__":
         naivebayes.test('testSet4.csv')
         naivebayes.train('trainSet5.csv')
         naivebayes.test('testSet5.csv')
-        ''' 
         toclassify = input("Enter the string to classify:")
         print(naivebayes.classify(toclassify))
         
