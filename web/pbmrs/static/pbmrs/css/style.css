@@ -6,3 +6,10 @@
 .jumbotron,h1{
 	color: #ffffff
 }
+footer{
+	width: 100%;
+	background-color: #2F4F4F
+}
+footer,p{
+	color: #ffffff
+}
