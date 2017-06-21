@@ -74,3 +74,5 @@ target/
 
 # for testdata folders
 _testdata/
+.*.swp
+
