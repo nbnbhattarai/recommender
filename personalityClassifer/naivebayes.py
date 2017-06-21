@@ -221,6 +221,8 @@ class NaiveBayes: #Classification algorithm for personality identification based
         if openness >= 0.5:
             verdict += "Openness"
         return verdict
+    def testImport(self):
+        return "sucessful"
     def test(self,file):
         with open(file, 'r',encoding='utf-8',errors='replace') as f:
             reader = csv.DictReader(f)
