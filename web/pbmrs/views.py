@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponse
 import sys
-sys.path.insert(0,'../../')
-from personalityClassifer.naivebayes import NaiveBayes
+sys.path.insert(0,'../')
+from personalityClassifier.naivebayes import NaiveBayes
 
 # Create your views here.
 naivebayes = NaiveBayes()
