@@ -14,6 +14,18 @@
 .status,span{
 	float: right;
 }
+.status,small{
+	color: #ffffff
+}
+.status,small{
+	color: #ffffff
+}
+.userinfo,h3,li{
+	color: #000000
+}
+#startMsg{
+	color: #000000
+}
 footer{
 	width: 100%;
 	background-color: #2F4F4F
