@@ -8,6 +8,12 @@
 	padding : 5px;
 	color: #ffffff
 }
+.login_btn{
+	float: right;
+}
+.status,span{
+	float: right;
+}
 footer{
 	width: 100%;
 	background-color: #2F4F4F
