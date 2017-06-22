@@ -1,0 +1,31 @@
+#+SEQ_TODO: TODO(t) NEXT(n) | DONE(d) CANCELED(c)
+#+TITLE: TODO FOR Major Projct Till Mid-Term
+#+DATE:<2017-03-04 Sat> 
+
+* Major Project (Music Recommender) For Mid-term
+
+** DONE Collect the dataSet from myPersonality DataSet.
+   DEADLINE: <2017-03-05 Sun>
+** TODO Design User Data Model[3/6] 
+   User Data Model represents a facebook user completely.
+   This model is used by recommender system for recommendation.
+   Contains data personality predicted from the dataSet. 
+   *** Tasks
+   DEADLINE: <2017-03-15 WED>
+   1) [X] Study the dataSet.
+      <2017-03-07 Tue>
+   2) [X] Preprocessing & Feature Extraction[Bag of words will be used] 
+      <2017-03-11 Sat>
+   3) [X] Develop Naive Bayes for Classification.
+      <2017-03-11 Sat>
+   4) [ ] Predict the personality of the facebook users.
+      <2017-03-13 Mon>
+   5) [ ] Develop the model(matrix) for recommendation and ranking.
+      <2017-03-14 Tue>
+   6) [ ] Use SVD for developed matrix model for ranking.
+      <2017-03-15 Wed>
+
+** NEXT User Data Extraction from facebook and testing[0/2]
+   SCHEDULED: <2017-03-26 Sun>
+   1. [ ] Get user's data from facebook using facebook API(graph API)
+   2. [ ] Test the Naive Bayes model on Users.
