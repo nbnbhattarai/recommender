@@ -9,8 +9,9 @@ naivebayes = NaiveBayes()
 def home(request):
     return render(request, 'pbmrs/index.html')
 
-def personality(request):
-    return HttpResponse(naivebayes.classify("This is awesome"))
+def about_personality(request):
+    #return HttpResponse(naivebayes.classify("This is awesome"))
+    return render(request,'pbmrs/aboutPersonality.html')
 
 def recommend(request):
     return HttpResponse("Recommendation")
