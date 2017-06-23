@@ -7,7 +7,15 @@ from personalityClassifier.naivebayes import NaiveBayes
 naivebayes = NaiveBayes()
 #naivebayes.classify("hello")
 def home(request):
-    return render(request, 'pbmrs/index.html')
+    #print(request.method)
+    posts = ""
+    if request.method == 'POST':
+        print("start here")
+        print(request.POST['posts'])
+        posts = request.POST['posts']
+    personality = naivebayes.classify(posts)
+    test = {'test':posts,'classifier':personality}
+    return render(request, 'pbmrs/index.html',test)
 
 def about_personality(request):
     #return HttpResponse(naivebayes.classify("This is awesome"))

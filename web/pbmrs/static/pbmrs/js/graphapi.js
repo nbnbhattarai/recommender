@@ -40,17 +40,20 @@ function checkLoginState() {
 function setElements(isLoggedIn){
 	if(isLoggedIn){
 		document.getElementById('profile').style.display='block';
+		document.getElementById('form').style.display='block';
 		document.getElementById('fb-btn').style.display='none';
 		document.getElementById('startMsg').innerHTML =""
 		document.getElementById('personalityInfo').innerHTML="Your Personality";
 		document.getElementById('recommendation').innerHTML="Recommendation";
 	}else{
 		document.getElementById('profile').style.display='none';
+		document.getElementById('form').style.display='none';
 		document.getElementById('fb-btn').style.display='block';
 		document.getElementById('startMsg').innerHTML ="Log in to determine your personality"
 		document.getElementById('state').innerHTML = "" 
 		document.getElementById('personalityInfo').innerHTML='';
 		document.getElementById('recommendation').innerHTML='';
+		document.getElementById('personality').style.display='none';
 
 	}
 }
@@ -67,8 +70,10 @@ function buildProfile(user){
 	let profile = `<h3>Welcome ${user.name}</h3> 
 			<ul class ="list-group">
 			<li class="list-group-item">User ID: ${user.id}</li>
-			<li class="list-group-item">Latest Post: ${user.posts.data[0].story}</li>
+			<li class="list-group-item "> Latest Post: ${user.posts.data[0].story}</li>
 			</ul>
 	`;
-	document.getElementById('state').innerHTML = profile
+	let posts =`${user.posts.data[0].story}`;
+	document.getElementById('state').innerHTML = profile;
+	document.getElementById('posts').innerHTML = posts;
 }

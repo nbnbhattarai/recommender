@@ -8,6 +8,28 @@
 {% block body %}
 <h3 id="startMsg"> Log In to determine your personality</h3>
  <p id="state" class="userInfo"></p>
- <h3 id="personalityInfo"></h3>
+ <form action="/" method="post" id="form" name="myForm">
+	 {% csrf_token %}
+	 <input type="hidden", name="posts" id="tests">
+	<input type="submit" value="Determine my personality" id="submit">
+</form>
+<h3 id="personalityInfo"></h3>
+<h4 id="personality"> {{classifier}}</h4>
  <h3 id="recommendation"></h3>
+ <!--  <h2>Test:{{test}}</h2> -->
+ 
+
+<h2 id='posts' style="display:none"><h2>
+<script type="text/javascript">
+function extractPost(){
+var x = document.getElementById('posts');
+var elem = document.getElementById('tests');
+elem.value = x.innerHTML;
+console.log(x);
+}
+setTimeout(function(){extractPost()},3000);
+var form = document.getElementById("form");
+console.log(form);
+</script>
+
 {% endblock %}
