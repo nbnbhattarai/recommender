@@ -40,14 +40,14 @@ function checkLoginState() {
 function setElements(isLoggedIn){
 	if(isLoggedIn){
 		document.getElementById('profile').style.display='block';
-		document.getElementById('form').style.display='block';
+		//document.getElementById('form').style.display='block';
 		document.getElementById('fb-btn').style.display='none';
 		document.getElementById('startMsg').innerHTML =""
 		document.getElementById('personalityInfo').innerHTML="Your Personality";
 		document.getElementById('recommendation').innerHTML="Recommendation";
 	}else{
 		document.getElementById('profile').style.display='none';
-		document.getElementById('form').style.display='none';
+		//document.getElementById('form').style.display='none';
 		document.getElementById('fb-btn').style.display='block';
 		document.getElementById('startMsg').innerHTML ="Log in to determine your personality"
 		document.getElementById('state').innerHTML = "" 
