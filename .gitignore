@@ -75,3 +75,11 @@ target/
 # for testdata folders
 _testdata/
 *.swp
+# for virtualenv
+bin/*
+pip-selfcheck.json
+pyvenv.cfg
+lib64
+
+# sqlite-db
+web/db.sqlite3
