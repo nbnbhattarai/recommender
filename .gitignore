@@ -77,6 +77,7 @@ _testdata/
 *.swp
 # for virtualenv
 bin/*
+include/*
 pip-selfcheck.json
 pyvenv.cfg
 lib64

@@ -1,12 +1,14 @@
 import numpy as np
 import math
+from operator import itemgetter
+from collections import OrderedDict
 
 user_matrix = np.array([
 			[0.1, 0.2, 0.9, 0.2, 0.9],
-			[0.3, 0.8, 0.9, 0.2, 0.9],
-			[0.1, 0.2, 0.9, 0.2, 0.9],
-			[0.1, 0.2, 0.9, 0.2, 0.9],
-			[0.1, 0.2, 0.9, 0.2, 0.9],
+			[0.3, 0.8, 0.1, 0.2, 0.2],
+			[0.2, 0.4, 0.7, 0.4, 0.1],
+			[0.23, 0.2, 0.8, 0.2, 0.5],
+			[0.4, 0.6, 0.2, 0.3, 0.43],
 		])
 
 def get_similar_user_matrix(user_matrix):
@@ -23,11 +25,28 @@ def get_similar_user_matrix(user_matrix):
 
 def get_k_similar_user_matrix(user_similarity_matrix, user_matrix_dict, k=4):
 	user_similarity_matrix_k = np.zeros((user_similarity_matrix.shape[0], k))
-	for key, value in user_matrix_dict.items():
-		for i in range(k):
-			if user_similarity_matrix_k[key[0]][i] < value and key[0] != i:
-				user_similarity_matrix_k[key[0]][i] = value
 
+	user_similarity_matrix_k = np.array([[(-1.0,-1.0) for _ in range(k)] for _ in range(user_similarity_matrix.shape[0])])
+
+	print(user_similarity_matrix_k)
+
+	sorted_dict = OrderedDict(sorted(user_matrix_dict.items(), key=itemgetter(1), reverse=True))
+
+	print(sorted_dict)
+
+	for key in sorted_dict:
+		print(key[0], ' -> ', key[1], ' = ', sorted_dict[key])
+		row = key[0]
+		for i in range(k):
+			if user_similarity_matrix_k[row][i][1] < sorted_dict[key] and key[0] != key[1]:
+				print('f*',sorted_dict[key])
+				user_similarity_matrix_k[row][i][1] = sorted_dict[key]
+				user_similarity_matrix_k[row][i][0] = key[1]
+				break
+
+	print(user_similarity_matrix_k)
+
+	# Returns matrix ( user in row id from 0-(N-1) ) with data (t, s) where t=> next user id, s => similarity
 	return user_similarity_matrix_k
 
 class Recommendation():
