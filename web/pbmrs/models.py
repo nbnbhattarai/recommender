@@ -23,4 +23,4 @@ class UserMusic(models.Model):
     userid = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(validators = [MaxValueValidator(5),MinValueValidator(0)])
     def __str__(self):
-            return u'%s %s %s' %(self.songid,self.userid,self.rating)
+            return u'%s-%s-%s' %(self.songid,self.userid,self.rating)
