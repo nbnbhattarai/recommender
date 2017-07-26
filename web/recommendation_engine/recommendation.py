@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 import math
 
 user_matrix = np.array([
@@ -59,25 +60,51 @@ class Recommendation():
 		for i in range(user_similarity_matrix.shape[0]):
 			pass
 
-	def latent_factor(self):
-		pass
-
+	def latent_factor(self,utility_matrix,K=2,steps=1000,alpha=0.0002,beta=0.02):
+            R = copy.deepcopy(utility_matrix) 
+            N = utility_matrix.shape[0]
+            M = utility_matrix.shape[1]
+            np.random.seed(0)
+            P = np.random.rand(N,K)
+            Q = np.random.rand(M,K)
+            Q = Q.T
+            for step in range(steps):
+                for i in range(utility_matrix.shape[0]):
+                    for j in range(utility_matrix.shape[1]):
+                        if R[i][j] > 0:
+                            eij = R[i][j] - np.dot(P[i,:],Q[:,j])
+                            for k in range(K):
+                                P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j]- beta * P[i][k])
+                                Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
+                e = 0
+                #for i in range(utility_matrix.shape[0]):
+                #   for j in range(utility_matrix.shape[1]):
+                #        if R[i][j] > 0:
+                #            e = e + pow(R[i][j]-np.dot(P[i,:],Q[:,j]),2)
+                #            for k in range(K):
+                #                e = e + (beta/2) * (pow(P[i][k],2) + pow(Q[k][j],2))
+                #                if e < 0.001:
+                #                    break
+            return np.dot(P,Q)
 if __name__=='__main__':
 
-	# recommendation = Recommendation()
-	# utility_matrix = np.array([
-	# 		[1,2],
-	# 		[5,3],
-	# 		[4,0],
-	# 	])
-	
+	recommendation = Recommendation()
+	utility_matrix = np.array([
+	 		[5, 3, 0, 1],
+	 		[4, 0, 0, 1],
+	 		[1, 1, 0, 5],
+                        [1, 0, 0, 4],
+                        [0, 1, 5, 4]
+	 	])
+	print(recommendation.latent_factor(utility_matrix))
+        
 	# recommendation.global_baseline(utility_matrix)
-	similar_user, su_mat = get_similar_user_matrix(user_matrix)
-	print('+++++++++++++++++')
-	print(similar_user)
+	#similar_user, su_mat = get_similar_user_matrix(user_matrix)
+	#print('+++++++++++++++++')
+	#print(similar_user)
 
-	print('+++++++++++++++++')
-	print(su_mat)
+	#print('+++++++++++++++++')
+	#print(su_mat)
 
 	# similar_user_sorted = sorted(similar_user, reverse=True)
 	# k = 3
@@ -92,4 +119,4 @@ if __name__=='__main__':
 	# 		l.append([k,v])
 	# 		print(l)
 
-	print(get_k_similar_user_matrix(su_mat, similar_user, k=4))
+	#print(get_k_similar_user_matrix(su_mat, similar_user, k=4))
