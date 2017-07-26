@@ -81,6 +81,7 @@ include/*
 pip-selfcheck.json
 pyvenv.cfg
 lib64
+*_flymake*
 
 # sqlite-db
 web/db.sqlite3

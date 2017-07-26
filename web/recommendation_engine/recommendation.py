@@ -56,7 +56,7 @@ class Recommendation():
 
 	def global_baseline(self, utility_matrix):
 		system_average = np.average(utility_matrix)
-		user_deviation = system_average - np.mean(utility_matrix, axis=0) 
+		user_deviation = system_average - np.mean(utility_matrix, axis=0)
 		music_rating_deviation = system_average - np.mean(utility_matrix, axis=1)
 
 		utility_matrix_copy = np.zeros(utility_matrix.shape)
@@ -82,14 +82,13 @@ class Recommendation():
 		pass
 
 if __name__=='__main__':
-
 	# recommendation = Recommendation()
 	# utility_matrix = np.array([
 	# 		[1,2],
 	# 		[5,3],
 	# 		[4,0],
 	# 	])
-	
+
 	# recommendation.global_baseline(utility_matrix)
 	similar_user, su_mat = get_similar_user_matrix(user_matrix)
 	print('+++++++++++++++++')
@@ -103,7 +102,7 @@ if __name__=='__main__':
 	# k_matrix = np.zeros((su_mat.shape[0], k))
 	# for (a,b) in similar_user_sorted:
 	# 	print(a,b)
-	# 	if k_matrix[a][k] 
+	# 	if k_matrix[a][k]
 	# 		k_matrix[a]
 
 	# for k,v in similar_user.items():
