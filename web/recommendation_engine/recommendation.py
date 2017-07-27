@@ -1,6 +1,7 @@
 import numpy as np
 import copy
 import math
+import heapq
 
 user_matrix = np.array([
 			[0.1, 0.2, 0.9, 0.2, 0.9],
@@ -42,7 +43,7 @@ class Recommendation():
 		music_rating_deviation = system_average - np.mean(utility_matrix, axis=1)
 
 		utility_matrix_copy = np.zeros(utility_matrix.shape)
-
+		utility_matrix_2 = copy.deepcopy(utility_matrix)
 		#print(utility_matrix_copy)
 		#print(system_average)
 		#print(user_deviation)
@@ -52,15 +53,49 @@ class Recommendation():
 			for i in range(len(user_deviation)):
 				#print('i:', i, 'j:', j)
 				utility_matrix_copy[j][i] = system_average + user_deviation[i] + music_rating_deviation[j]
+				if utility_matrix[j][i] == 0:
+					utility_matrix_2[j][i] = utility_matrix_copy[j][i]
 
-		print('baseline:',utility_matrix_copy)
-		return utility_matrix_copy
+		print('baseline:',utility_matrix_copy, '\nNext baseline: ', utility_matrix_2)
+		return utility_matrix_copy, utility_matrix_2
 
-	def collaborative_personality(self, user_similarity_matrix, utility_matrix, k=3):
+	def collaborative_personality(self, user_similarity_matrix, utility_matrix, k=2):
+		print('usre_matrix:', utility_matrix)
 		for i in range(user_similarity_matrix.shape[0]):
-			pass
+			similar = list(user_similarity_matrix[i])
+			music_rating_row = list(utility_matrix[i])
+			for j in range(len(music_rating_row)):
+				if music_rating_row[j] == 0:
+					nearest_neighbor_rating = list(utility_matrix[:,j])
+					for nl in range(len(nearest_neighbor_rating)):
+						if nearest_neighbor_rating[nl] == 0:
+							similar[nl] = 0
+					if (len([ i for i in similar if i != 0]) < k):
+						print('Collaborative Failded!')
+						return None
+					print('fucking similar : ', similar)
+					similar_k = heapq.nlargest(k, similar)
+					print('fucking similar_k : ', similar_k)
+					similar_k_index = []
+					for sk in similar_k:
+						index = similar.index(sk)
+						if index in similar_k_index:
+							index = similar.index(sk, index + 1)
+						similar_k_index.append(index)
+					print('fucking similar_k_index : ', similar_k)
+					product_sim = 0
+					sum_sim = 0
+					print('music_rating_row:', music_rating_row)
+					print('nearest_neighbor_rating:', nearest_neighbor_rating)
+					print(similar_k_index)
+					for k in similar_k_index:
+						product_sim += ( similar[k] * nearest_neighbor_rating[k] )
+						sum_sim += similar[k]
+					result = product_sim/sum_sim
+					utility_matrix[i,j] = result
+		return utility_matrix
 
-	def latent_factor(self,utility_matrix,K=2,steps=50000,alpha=0.0002,beta=0.02):
+	def latent_factor(self,utility_matrix,K=2,steps=5000,alpha=0.0002,beta=0.02):
             R = copy.deepcopy(utility_matrix)
             N = utility_matrix.shape[0]
             M = utility_matrix.shape[1]
@@ -89,10 +124,15 @@ class Recommendation():
 if __name__=='__main__':
 
 	recommendation = Recommendation()
-	utility_matrix = np.array([[5, 3, 0, 1],[4, 0, 0, 1],[1, 1, 0, 5], [1, 0, 0, 4],[0, 1, 5, 4]])
-	print(utility_matrix)
-	print(recommendation.latent_factor(utility_matrix))
-	recommendation.global_baseline(utility_matrix)
+	utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 0, 1],[1, 1, 0, 5], [1, 2, 0, 4],[2, 1, 1, 4]])
+	print(recommendation.latent_factor(utility_matrix[:]))
+	print('utility_matrix', utility_matrix)
+	x, user_similarity_matrix = get_similar_user_matrix(user_matrix)
+	collaborative_result = recommendation.collaborative_personality(user_similarity_matrix, utility_matrix)
+	if not collaborative_result:
+		print('Using global baseline....')
+		_,collaborative_result = recommendation.global_baseline(utility_matrix)
+	print('Collaborative filtering: ', collaborative_result)
 	#similar_user, su_mat = get_similar_user_matrix(user_matrix)
 	#print('+++++++++++++++++')
 	#print(similar_user)
