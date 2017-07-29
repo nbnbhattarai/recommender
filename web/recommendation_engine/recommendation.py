@@ -61,19 +61,22 @@ class Recommendation():
 
 	def collaborative_personality(self, user_similarity_matrix, utility_matrix, k=2):
 		print('usre_matrix:', utility_matrix)
+		combined_matrix = copy.deepcopy(utility_matrix)
+		global_baseline_result = self.global_baseline(utility_matrix)[0]
+		temp_matrix = utility_matrix - global_baseline_result
 		for i in range(user_similarity_matrix.shape[0]):
 			similar = list(user_similarity_matrix[i])
 			music_rating_row = list(utility_matrix[i])
 			for j in range(len(music_rating_row)):
 				if music_rating_row[j] == 0:
 					nearest_neighbor_rating = list(utility_matrix[:,j])
+					nearest_neighbor_temp_mat = list(temp_matrix[:,j])
 					for nl in range(len(nearest_neighbor_rating)):
 						if nearest_neighbor_rating[nl] == 0:
 							similar[nl] = 0
 					if (len([ i for i in similar if i != 0]) < k):
 						print('Collaborative Failded!')
 						return None
-					print('fucking similar : ', similar)
 					similar_k = heapq.nlargest(k, similar)
 					print('fucking similar_k : ', similar_k)
 					similar_k_index = []
@@ -93,7 +96,15 @@ class Recommendation():
 						sum_sim += similar[k]
 					result = product_sim/sum_sim
 					utility_matrix[i,j] = result
-		return utility_matrix
+					offset = global_baseline_result[i,j]
+					product_sim = offset
+					sum_sim = 0
+					for k in similar_k_index:
+						product_sim += ( similar[k] * nearest_neighbor_temp_mat[k] )
+						sum_sim += similar[k]
+					result = product_sim/sum_sim
+					combined_matrix[i,j] = result
+		return True,utility_matrix, combined_matrix
 
 	def latent_factor(self,utility_matrix,K=2,steps=5000,alpha=0.0002,beta=0.02):
             R = copy.deepcopy(utility_matrix)
@@ -121,18 +132,59 @@ class Recommendation():
                                 if e < 0.001:
                                     break
             return np.dot(P,Q)
+def model_evaluation(predicted, actual):
+	count = 0.0
+	sum_me = 0.0
+	print('predicted: \n', predicted, ' and \n actual :\n', actual)
+	print('\npredicted val:', predicted[0])
+	for i in range(predicted.shape[0]):
+		for j in range(predicted.shape[1]):
+			if actual[i][j] != 0:
+				count += 1
+				# print('squared: ', (actual[i, j] - predicted[i, j])**2)
+				sum_me += (actual[i,j] - predicted[i,j])**2
+	rmse = math.sqrt(sum_me/count)
+	# print('rmse:', rmse)
+	return rmse
+
 if __name__=='__main__':
 
 	recommendation = Recommendation()
-	utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 0, 1],[1, 1, 0, 5], [1, 2, 0, 4],[2, 1, 1, 4]])
-	print(recommendation.latent_factor(utility_matrix[:]))
+	utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 3, 1],[1, 1, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
+	percentage = 35/100
+	# test_rows, test_cols = math.ceil(percentage * utility_matrix.shape[0]), math.ceil(percentage * utility_matrix.shape[1])
+	test_rows = test_cols = 1
+	actual_rating_mat = copy.deepcopy(utility_matrix[:test_rows, :test_cols])
+	print('Actual rating mat:\n', actual_rating_mat)
+	utility_matrix_2 = copy.deepcopy(utility_matrix)
+	utility_matrix[:test_rows, :test_cols] = 0
+	result_latent = recommendation.latent_factor(utility_matrix[:])
+	print('latent result: ', result_latent)
 	print('utility_matrix', utility_matrix)
-	x, user_similarity_matrix = get_similar_user_matrix(user_matrix)
-	collaborative_result = recommendation.collaborative_personality(user_similarity_matrix, utility_matrix)
-	if not collaborative_result:
+	_, user_similarity_matrix_personality = get_similar_user_matrix(user_matrix)
+	_, user_similarity_matrix_rating = get_similar_user_matrix(utility_matrix)
+	print('rating similarity:',user_similarity_matrix_rating)
+	print('\n =======================\nutility_matrix_2:', utility_matrix_2)
+
+	collaborative_success, collaborative_result, collaborative_result_combined = recommendation.collaborative_personality(user_similarity_matrix_personality, utility_matrix)
+	print('result collaborative combined:', collaborative_result_combined)
+
+	if not collaborative_success:
 		print('Using global baseline....')
-		_,collaborative_result = recommendation.global_baseline(utility_matrix)
+		_,collaborative_result = recommendation.global_baseline(utility_matrix_2)
 	print('Collaborative filtering: ', collaborative_result)
+
+	predicted_baseline = np.array(recommendation.global_baseline(utility_matrix_2))[0][:test_rows, :test_cols]
+	predicted_latent = result_latent[:test_rows, :test_cols]
+	if collaborative_success:
+		predicted_collaborative = collaborative_result[:test_rows, :test_cols]
+		predicted_collaborateive_combined = collaborative_result_combined[:test_rows, :test_cols]
+		print('collaborative evaluation: ', model_evaluation(predicted_collaborative, actual_rating_mat))
+		print('combined evaluation: ', model_evaluation(predicted_collaborateive_combined, actual_rating_mat))
+
+	print('baseline evaluation: ', model_evaluation(predicted_baseline, actual_rating_mat))
+	print('latent evaluation: ', model_evaluation(predicted_latent, actual_rating_mat))
+
 	#similar_user, su_mat = get_similar_user_matrix(user_matrix)
 	#print('+++++++++++++++++')
 	#print(similar_user)
