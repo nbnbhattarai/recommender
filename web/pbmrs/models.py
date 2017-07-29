@@ -9,6 +9,7 @@ class Music(models.Model):
         #return self.artist
 
 class User(models.Model):
+    fb_id = models.IntegerField()
     userName = models.CharField(max_length=250)
     op = models.IntegerField()
     cons = models.IntegerField()
@@ -19,8 +20,14 @@ class User(models.Model):
         return self.userName
 
 class UserMusic(models.Model):
-    songid = models.ForeignKey(Music, on_delete=models.CASCADE)
-    userid = models.ForeignKey(User, on_delete=models.CASCADE)
+    song = models.ForeignKey(Music, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(validators = [MaxValueValidator(5),MinValueValidator(0)])
     def __str__(self):
             return u'%s-%s-%s' %(self.songid,self.userid,self.rating)
+
+class Recommendation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    music = models.ManyToManyField(Music)
+    def __str__(self):
+        return self.user

@@ -84,4 +84,8 @@ lib64
 *_flymake*
 
 # sqlite-db
+db.sqlite3
 web/db.sqlite3
+
+#
+migrations/
