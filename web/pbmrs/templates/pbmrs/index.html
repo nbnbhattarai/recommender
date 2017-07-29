@@ -1,30 +1,36 @@
 {% extends 'pbmrs/base.html' %}
 
 {% block title %}
-<title>Homepage</title>
+Homepage
 {% endblock %}
 
-
 {% block body %}
+<!--
 <h3 id="startMsg"> Log In to determine your personality</h3>
- <p id="state" class="userInfo"></p>
- <input type="submit" value="Determin my personality" id="ajax_btn">
- <!--
+<p id="state" class="userInfo"></p>
+<input type="submit" value="Determin my personality" id="ajax_btn">
+
  <form method='POST' action= '/'id="form" name="myForm">
 	 {% csrf_token %}
 	 <input type="hidden", name="posts" id="tests">
 	<input type="submit" value="Determine my personality" id="submit">
 </form>
  -->
-<h3 id="personalityInfo"></h3>
+<!-- <h3 id="personalityInfo"></h3> -->
 <!--
 <h4 id="personality"> {{classifier}}</h4>
--->
+
 <h4 id="ajax_response"> </h4>
  <h3 id="recommendation"></h3>
- <!--  <h2>Test:{{test}}</h2> -->
+   <h2>Test:{{test}}</h2> -->
 
+ <div class="container">
+   <h3 id="heading">Log in to view your profile</h3>
+   <div id="profile"></div>
+   <div id="feed"></div>
+ </div>
 
+<!--
 <h2 id='posts' style="display:none"><h2>
 <script type="text/javascript">
 function extractPost(){
@@ -50,5 +56,5 @@ $('#ajax_btn').click(function(){
 	});
 });
 </script>
-
+-->
 {% endblock %}

@@ -8,6 +8,13 @@ def get_user(fb_id):
         return None
     return user
 
+def get_user_by_id(id):
+    try:
+        user = User.objects.get(pk=id)
+    except:
+        return None
+    return user
+
 def get_music_from_id(music_id):
     try:
         music = Music.objects.get(pk=music_id)
@@ -40,3 +47,22 @@ def get_utility_matrix(UserMusic):
     usermusic_data = UserMusic.objects.all():
         utility_matrix[usermusic_data.user.pk][usermusic_data.music.pk] = usermusic_data.rating
     return usermusic_data
+
+def add_recommendation(utility_matrix):
+    all_recommendations = Recommendation.objects.all()
+    for user_id in range(utility_matrix.shape[0]):
+        i_sorted = sorted(enumerate(utility_matrix[user_id]), key=operator.itemgetter(1), reversed=True)
+        try:
+            user_from_db = User.objects.get(pk=)
+            recommendation = Recommendation.objects.get(user=)
+            recommendation.music.clear()
+            for i,r in i_sorted:
+                music = get_music_from_id(i+1)
+                recommendation.music.add(music)
+        except:
+            recommendation = Recommendation()
+            new_user = get_user_by_id(user_id)
+
+
+def get_recommendation(user_id):
+    pass

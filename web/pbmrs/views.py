@@ -1,4 +1,5 @@
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render,HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 import dill
 import sys
 from django import views
@@ -24,6 +25,7 @@ class Home(views.View):
     def get(self, request, *args, **kwargs):
         posts = ""
         print("get request")
+        print(request.GET)
         print(request.GET.get('posts'))
         posts = request.GET.get('posts')
         print('posts: ', posts)
@@ -36,10 +38,21 @@ class Home(views.View):
         return render(request, 'pbmrs/index.html',context)
 
     def post(self, request, *args, **kwargs):
-        print('request.POST')
+        print('fucking post request:', request.POST)
+        user_id = request.POST.get('id')
         context = {
         }
-        return render(request, 'pbmrs/index.html',context)
+        response = render(request, 'pbmrs/index.html',context)
+        if user_id:
+            response.set_cookie('logined', 'yes_of_course')
+        for x in request.POST:
+            print(x, ' : ', request.POST[x])
+        return response
+
+def logout_view(request):
+    response = HttpResponseRedirect(reverse('home'))
+    response.delete_cookie('logined')
+    return response
 
 def about_personality(request):
     #return HttpResponse(naivebayes.classify("This is awesome"))
