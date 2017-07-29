@@ -50,7 +50,7 @@ function setElements(isLoggedIn){
 		//document.getElementById('form').style.display='none';
 		document.getElementById('fb-btn').style.display='block';
 		document.getElementById('startMsg').innerHTML ="Log in to determine your personality"
-		document.getElementById('state').innerHTML = "" 
+		document.getElementById('state').innerHTML = ""
 		document.getElementById('personalityInfo').innerHTML='';
 		document.getElementById('recommendation').innerHTML='';
 		document.getElementById('personality').style.display='none';
@@ -66,8 +66,9 @@ function testAPI(){
 		}
 	});
 }
+
 function buildProfile(user){
-	let profile = `<h3>Welcome ${user.name}</h3> 
+	let profile = `<h3>Welcome ${user.name}</h3>
 			<ul class ="list-group">
 			<li class="list-group-item">User ID: ${user.id}</li>
 			<li class="list-group-item "> Latest Post: ${user.posts.data[0].story}</li>

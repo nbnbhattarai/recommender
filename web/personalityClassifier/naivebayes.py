@@ -1,5 +1,5 @@
 import pandas as pd
-import dill 
+import dill
 import csv
 import math
 from nltk.corpus import stopwords
@@ -27,7 +27,7 @@ class NaiveBayes: #Classification algorithm for personality identification based
         self.stopW = set(self.stopW)
         try:
             with open("hashTable.pik","rb") as f:
-                
+
                 print("Hash Table is loaded")
                 hTable = dill.load(f)
                 self.hTable = hTable
@@ -37,7 +37,7 @@ class NaiveBayes: #Classification algorithm for personality identification based
             with open("prior.pik","rb") as f:
                 print("prior probability is loaded")
                 prior = dill.load(f)
-                self.priorofE,self.priorofN,self.priorofA,self.priorofC,self.priorofO=prior        
+                self.priorofE,self.priorofN,self.priorofA,self.priorofC,self.priorofO=prior
         except FileNotFoundError:
             print("Prior Probabaility is not calculated")
         try:
@@ -53,7 +53,7 @@ class NaiveBayes: #Classification algorithm for personality identification based
         for i in filteredW:
             sentence += i
             sentence += " "
-        return sentence 
+        return sentence
     def train(self,file):
         with open(file, 'r',encoding='utf-8',errors='replace') as f:
             reader = csv.DictReader(f)
@@ -73,7 +73,7 @@ class NaiveBayes: #Classification algorithm for personality identification based
                 if row['cOPN'] == 'y' :
                     self.oStatus.append(status)
                 self.megaStatus.append(status)
-            
+
             #Calculate the prior probabilty of each class
         prior = self.calculatePrior(self.eStatus,self.nStatus,self.aStatus,self.cStatus,self.oStatus,self.megaStatus)
         self.priorofE,self.priorofN,self.priorofA,self.priorofC,self.priorofO = prior
@@ -82,7 +82,7 @@ class NaiveBayes: #Classification algorithm for personality identification based
         #print("\n Openness: %f\n Conscientiousness: %f\n Extraversion: %f\n Agreeableness: %f\n Neuroticism: %f\n" %(priorofO,priorofC,priorofE,priorofA,priorofN))
         #Calculate likelihood
         #Using Hash Table
-        self.hTable = self.generateHash(self.eStatus,self.nStatus,self.aStatus,self.cStatus,self.oStatus,self.megaStatus) 
+        self.hTable = self.generateHash(self.eStatus,self.nStatus,self.aStatus,self.cStatus,self.oStatus,self.megaStatus)
         #print(pd.DataFrame(self.hTable))
         #status = ((self.megaStatus[0])).split()
         #print(len(status))
@@ -94,8 +94,8 @@ class NaiveBayes: #Classification algorithm for personality identification based
        priorofC = len(cStatus)/total
        priorofO = len(oStatus)/total
        return priorofE,priorofN,priorofA,priorofC,priorofO
-   
-         
+
+
     def generateHash(self,eStatus,nStatus,aStatus,cStatus,oStatus,megaStatus):
        eStatusList = []
        nStatusList = []
@@ -159,11 +159,11 @@ class NaiveBayes: #Classification algorithm for personality identification based
                cStatusDict[i] = megaStatus.count(i)
        '''
        #Adjust Valuse: To those attributes present in one class but not in other as if they are left zero doesn't work well
-       eStatusDict,nStatusDict,aStatusDict,cStatusDict = self.adjustValue(oStatusDict,eStatusDict,nStatusDict,aStatusDict,cStatusDict) 
-       eStatusDict,nStatusDict,aStatusDict,oStatusDict = self.adjustValue(cStatusDict,eStatusDict,nStatusDict,aStatusDict,oStatusDict) 
-       eStatusDict,nStatusDict,oStatusDict,cStatusDict = self.adjustValue(aStatusDict,eStatusDict,nStatusDict,oStatusDict,cStatusDict) 
+       eStatusDict,nStatusDict,aStatusDict,cStatusDict = self.adjustValue(oStatusDict,eStatusDict,nStatusDict,aStatusDict,cStatusDict)
+       eStatusDict,nStatusDict,aStatusDict,oStatusDict = self.adjustValue(cStatusDict,eStatusDict,nStatusDict,aStatusDict,oStatusDict)
+       eStatusDict,nStatusDict,oStatusDict,cStatusDict = self.adjustValue(aStatusDict,eStatusDict,nStatusDict,oStatusDict,cStatusDict)
        eStatusDict,oStatusDict,aStatusDict,cStatusDict = self.adjustValue(nStatusDict,eStatusDict,oStatusDict,aStatusDict,cStatusDict)
-       oStatusDict,nStatusDict,aStatusDict,cStatusDict = self.adjustValue(eStatusDict,oStatusDict,nStatusDict,aStatusDict,cStatusDict) 
+       oStatusDict,nStatusDict,aStatusDict,cStatusDict = self.adjustValue(eStatusDict,oStatusDict,nStatusDict,aStatusDict,cStatusDict)
        #Generate a likelihood probability
        for key,value in eStatusDict.items():
            eStatusDict[key] = (value+1)/(len(eStatusList)+vocaSize)
@@ -177,7 +177,7 @@ class NaiveBayes: #Classification algorithm for personality identification based
            oStatusDict[key] = (value+1)/(len(oStatusList)+vocaSize)
        hTable = {'Extraversion':eStatusDict,'Neuroticism':nStatusDict,'Agreebleness':aStatusDict,'Conscientiousness':cStatusDict,'Openness':oStatusDict}
        with open("hashTable.pik","wb") as f:
-           dill.dump(hTable,f)  
+           dill.dump(hTable,f)
        return hTable
     def adjustValue(self,dict0,dict1,dict2,dict3,dict4):
        for i in dict0:
@@ -210,8 +210,8 @@ class NaiveBayes: #Classification algorithm for personality identification based
             a.append(self.calculate('Agreebleness',i))
             c.append(self.calculate('Conscientiousness',i))
             o.append(self.calculate('Openness',i))
-        
-        priorofE,priorofN,priorofA,priorofC,priorofO = self.priorofE,self.priorofN,self.priorofA,self.priorofC,self.priorofO 
+
+        priorofE,priorofN,priorofA,priorofC,priorofO = self.priorofE,self.priorofN,self.priorofA,self.priorofC,self.priorofO
         '''
         print(e)
         print(n)
@@ -241,27 +241,31 @@ class NaiveBayes: #Classification algorithm for personality identification based
         agreebleness = math.modf(math.log(ap))[0] * -1
         conscientiouness  = math.modf(math.log(cp))[0] * -1
         openness = math.modf(math.log(op))[0] * -1
-        if extraversion >= 0.5:
-            verdict += "Extraversion "
-        if neuroticism >= 0.5:
-            verdict += "Neuroticism "
-        if agreebleness >= 0.5:
-            verdict += "Agreebleness "
-        if conscientiouness >= 0.5:
-            verdict += "Conscientiousness"
-        if openness >= 0.5:
-            verdict += "Openness"
+        # if extraversion >= 0.5:
+        #     verdict += "Extraversion "
+        # if neuroticism >= 0.5:
+        #     verdict += "Neuroticism "
+        # if agreebleness >= 0.5:
+        #     verdict += "Agreebleness "
+        # if conscientiouness >= 0.5:
+        #     verdict += "Conscientiousness"
+        # if openness >= 0.5:
+        #     verdict += "Openness"
+        # verdict = 'Extraversion: ' + str(extraversion) + ' Neuroticism: ' + str(neuroticism) + ' Agreebleness: ' + str(agreebleness) + ' Conscientiousness: ' + str(conscientiouness) + ' Openness: ' + str(openness)
+        verdict = {'ex':extraversion, 'neu': neuroticism, 'ag':agreebleness, 'cons':conscientiouness, 'op':openness}
         return verdict
+
     def testImport(self):
         return "sucessful"
+
     def test(self,file):
         with open(file, 'r',encoding='utf-8',errors='replace') as f:
             reader = csv.DictReader(f)
             totalCount = 0
             countT = 0
             countF = 0
-            
-            
+
+
             for row in reader:
                 totalCount += 1
                 status = self.filterWords(row['STATUS'])
@@ -298,10 +302,10 @@ class NaiveBayes: #Classification algorithm for personality identification based
                         if row['cOPN'] == 'n' and j not in verdict :
                             countF += 1
                             totalCount += 1
-                        
+
                 except AttributeError:
                     continue
-           
+
         accuracy = (countT+countF) / (totalCount)
         print("Accuracy:",accuracy)
 
@@ -311,7 +315,7 @@ if __name__=="__main__":
         naivebayes = NaiveBayes()
         #naivebayes.train('dataSet/mypersonality_final/mypersonality_final.csv')
 
-        
+
        #naivebayes.train('trainSet1.csv')
        #naivebayes.test('testSet1.csv')
        #naivebayes.train('trainSet2.csv')
@@ -324,7 +328,6 @@ if __name__=="__main__":
        #naivebayes.test('testSet5.csv')
         toclassify = input("Enter the string to classify:")
         print(naivebayes.classify(toclassify))
-        
+
     except FileNotFoundError:
         print("Training file unavailable")
-
