@@ -5,27 +5,50 @@ Homepage
 {% endblock %}
 
 {% block body %}
-
-  <div class="container">
-    <h3 id="heading">Log in to Listen recommended songs</h3>
-    <div id="profile"></div>
-    <div id="feed"></div>
-		{% if recommended_songs %}
-		<h3 id="heading">Recommended Songs:</h3>
-		{% for rsong in recommended_songs %}
-			<div class="row">
-			  <div class="col-sm-6 col-md-12">
-			    <div class="thumbnail">
-			      {# <img src="..." alt="...">#}
-			      <div class="caption">
-			        <h3>{{ rsong.song }}</h3>
-			        <p>{{ rsong.artist }}</p>
-			      </div>
-			    </div>
-			  </div>
+	<div class="ui grid">
+	  <div class="twelve wide column">
+			<div class="ui">
 			</div>
-		{% endfor %}
-		{% endif %}
-</div>
+		</div>
+	  <div class="sixteen wide column">
+			{% if recommended_songs %}
+			<h3 id="heading">Recommended Songs:</h3>
+				<div class="ui five cards">
+					{% for rsong in recommended_songs %}
+					<div class="ui card">
+					  <div class="image">
+							{% load static %}
+							<img src="{% static "/pbmrs/img/music_cover.png" %}">
+					  </div>
+					  <div class="content">
+					    <a class="header">{{ rsong.song }}</a>
+					    <div class="meta">
+					      <span class="date">Uploaded in 2013</span>
+					    </div>
+					    <div class="description">
+								{{ rsong.artist }}
+					    </div>
+					  </div>
+					</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+		<div class="ui segment" id="login-segment">
+		  <p>Login to listen songs of your choice</p>
+		</div>
+		<div class="ui modal">
+		  <div class="header">Header</div>
+		  <div class="content">
+		    <p></p>
+		  </div>
+		  <div class="actions">
+		    <div class="ui approve button">Approve</div>
+		    <div class="ui button">Neutral</div>
+		    <div class="ui cancel button">Cancel</div>
+		  </div>
+		</div>
 
 {% endblock body%}
