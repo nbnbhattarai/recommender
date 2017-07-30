@@ -59,8 +59,3 @@ def makefeature():
 	df.to_csv('wordvector.csv')
 	return vocab
 
-
-# list is stored as string when exporting to wordvector.csv
-# to convert back to list use:
-# from ast import literal_eval
-# literal_eval('[1.23, 2.34]')
