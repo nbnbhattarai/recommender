@@ -1,63 +1,76 @@
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId            : '432605433783166',
-      autoLogAppEvents : true,
-      xfbml            : true,
-      version          : 'v2.10'
-    });
-    FB.getLoginStatus(function(response){
-      statusChangeCallback(response)
-    });
-  };
+window.fbAsyncInit = function() {
+  FB.init({
+    appId            : '432605433783166',
+    autoLogAppEvents : true,
+    xfbml            : true,
+    version          : 'v2.10'
+  });
+  FB.getLoginStatus(function(response){
+    statusChangeCallback(response)
+  });
+};
 
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-
+(function(d, s, id){
+   var js, fjs = d.getElementsByTagName(s)[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement(s); js.id = id;
+   js.src = "//connect.facebook.net/en_US/sdk.js";
+   fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
 
 function statusChangeCallback(response){
 	if(response.status == 'connected'){
 		console.log("logged in and authenticated");
+    var uid = response.authResponse.uerID;
+
 		setElements(true);
 		testAPI();
-	}else {
+	}else{
 		console.log("logged out");
 		setElements(false);
 	}
 }
 
-  function checkLoginState() {
-    FB.getLoginStatus(function(response) {
-      statusChangeCallback(response);
-    });
-  }
+function checkLoginState() {
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+}
 
-  function testAPI(){
-    FB.api('/me?fields=name,id,feed', function(response){
+function testAPI(){
+  // get data if not alredy loggedin
+  console.log("Outside getCookie");
+  var session_cookie = getCookie('sessionid')
+  var logined_cookie = getCookie('logined')
+  console.log('session_cookie: ', session_cookie, ' logined_cookie: ', logined_cookie);
+  if (session_cookie == null){
+    console.log('Inside getCookie');
+    FB.api('/me?fields=name,id,posts.limit(999)', function(response){
       if(response && !response.error){
-        console.log('fucking response 1')
-        console.log(response);
-        if (!getCookie('logined')){
-          var to_django = {'name': response.name, 'id': response.id, 'status_data' : response.feed.data };
-          post_to_url('http://localhost:8000', response)
+          // getting posts to send to django server
+          var posts = {};
+          var i = 0;
+          for (let x in response.posts.data){
+            console.log('inside')
+            if(response.posts.data[x].message){
+              posts[i] = response.posts.data[x].message;
+              i++;
+            }
+          }
+          console.log(posts)
+          var json_posts = JSON.stringify(posts);
+          var to_django = {'name': response.name, 'id': response.id, 'posts' : json_posts };
+          post_to_url('http://localhost:8000', to_django)
+          console.log(to_django);
         }
+        console.log('buildProfile');
         buildProfile(response);
-        buildFeed(response.feed)
-      }
-
-      // FB.api('/me/feed', function(response){
-      //   if(response && !response.error){
-      //     console.log('fucking response 2')
-      //     console.log(response)
-      //     buildFeed(response);
-      //   }
-      // });
-    })
+        buildFeed(posts)
+      });
+  }else{
+    console.log('Already Loggedin');
   }
+}
 
 function setElements(isLoggedIn){
 	if(isLoggedIn){
@@ -77,7 +90,6 @@ function setElements(isLoggedIn){
 
 function logout(){
   FB.logout(function(response){
-    // $.removeCookie('logined', { path: '/' });
     setElements(false);
     window.location = "http://localhost:8000/logout"
   });
@@ -87,19 +99,20 @@ function buildProfile(user){
 	let profile = `<h3>Welcome ${user.name}</h3>
 			<ul class ="list-group">
 			<li class="list-group-item">User ID: ${user.id}</li>
-      <li class="list-group-item "> Latest Post: ${user.feed.data[0].story}</li>
+      <li class="list-group-item "> Latest Post: ${user.posts.data[0].message}</li>
 			</ul>
 	`;
 	document.getElementById('profile').innerHTML = profile;
 }
 
-function buildFeed(feed){
+function buildFeed(posts){
   let output = '<h3>Latest Posts</h3>';
-  for(let i in feed.data){
-    if(feed.data[i].message){
+  for(let i in posts.data){
+    if(posts.data[i].message){
+      console.log('Message :' + posts.data[i].message);
       output += `
         <div class="well">
-          ${feed.data[i].message} <span>${feed.data[i].created_time}</span>
+          ${posts.data[i].message} <span>${posts.data[i].created_time}</span>
         </div>
       `;
     }
@@ -126,6 +139,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 
 function post_to_url(path, params, method) {
     method = method || "post"; // Set method to post by default if not specified.
@@ -157,4 +171,25 @@ function post_to_url(path, params, method) {
 
     document.body.appendChild(form);
     form.submit();
+}
+
+function getCookie2(name) {
+    var dc = document.cookie;
+    var prefix = name + "=";
+    var begin = dc.indexOf("; " + prefix);
+    if (begin == -1) {
+        begin = dc.indexOf(prefix);
+        if (begin != 0) return null;
+    }
+    else
+    {
+        begin += 2;
+        var end = document.cookie.indexOf(";", begin);
+        if (end == -1) {
+        end = dc.length;
+        }
+    }
+    // because unescape has been deprecated, replaced with decodeURI
+    //return unescape(dc.substring(begin + prefix.length, end));
+    return decodeURI(dc.substring(begin + prefix.length, end));
 }

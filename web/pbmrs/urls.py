@@ -5,5 +5,5 @@ urlpatterns = [
         url(r'^recommendation$',views.recommend),
         url(r'^about_personality$',views.about_personality),
         url(r'^classify_personality$',views.classifyPersonality),
-        url(r'^logout$',views.logout_view),
+        url(r'^logout$',views.LogOutView.as_view(), name='Logout'),
 ]

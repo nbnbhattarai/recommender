@@ -5,56 +5,27 @@ Homepage
 {% endblock %}
 
 {% block body %}
-<!--
-<h3 id="startMsg"> Log In to determine your personality</h3>
-<p id="state" class="userInfo"></p>
-<input type="submit" value="Determin my personality" id="ajax_btn">
 
- <form method='POST' action= '/'id="form" name="myForm">
-	 {% csrf_token %}
-	 <input type="hidden", name="posts" id="tests">
-	<input type="submit" value="Determine my personality" id="submit">
-</form>
- -->
-<!-- <h3 id="personalityInfo"></h3> -->
-<!--
-<h4 id="personality"> {{classifier}}</h4>
+  <div class="container">
+    <h3 id="heading">Log in to Listen recommended songs</h3>
+    <div id="profile"></div>
+    <div id="feed"></div>
+		{% if recommended_songs %}
+		<h3 id="heading">Recommended Songs:</h3>
+		{% for rsong in recommended_songs %}
+			<div class="row">
+			  <div class="col-sm-6 col-md-12">
+			    <div class="thumbnail">
+			      {# <img src="..." alt="...">#}
+			      <div class="caption">
+			        <h3>{{ rsong.song }}</h3>
+			        <p>{{ rsong.artist }}</p>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		{% endfor %}
+		{% endif %}
+</div>
 
-<h4 id="ajax_response"> </h4>
- <h3 id="recommendation"></h3>
-   <h2>Test:{{test}}</h2> -->
-
- <div class="container">
-   <h3 id="heading">Log in to view your profile</h3>
-   <div id="profile"></div>
-   <div id="feed"></div>
- </div>
-
-<!--
-<h2 id='posts' style="display:none"><h2>
-<script type="text/javascript">
-function extractPost(){
-//var x = document.getElementById('posts');
-//var elem = document.getElementById('tests');
-//elem.value = x.innerHTML;
-	var x = "loop";
-}
-setTimeout(function(){extractPost()},3000);
-//var form = document.getElementById("form");
-//console.log(form);
-$('#ajax_btn').click(function(){
-
-	console.log("clicked");
-	$.ajax({
-		method: 'GET',
-		url: '/classify_personality',
-		data: 'posts='+$('#posts').html(),
-		success: function(data){
-			console.log(data);
-			$('#ajax_response').text(data)
-		}
-	});
-});
-</script>
--->
-{% endblock %}
+{% endblock body%}
