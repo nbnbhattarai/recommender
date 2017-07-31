@@ -6,31 +6,17 @@ from ast import literal_eval
 class LogisticRegression:
 	data = None
 	X = None
-	Y_o = None
-	Y_c = None
-	Y_e = None
-	Y_a = None
-	Y_n = None
+	Y = None
+	class_type = None
+	theta = None
 
-	theta_o = None
-	theta_c = None
-	theta_e = None
-	theta_a = None
-	theta_n = None
-
-	def __init__(self, file = 'wordvector_train.csv'):
+	def __init__(self, file = 'wordvector_train.csv', class_name = 'class_o'):
 		self.load_data(file)
+		self.class_type = class_name
 		self.compute_X()
-		self.compute_Y_o()
-		self.compute_Y_c()
-		self.compute_Y_e()
-		self.compute_Y_a()
-		self.compute_Y_n()
-		self.theta_o = np.zeros(len(self.X[0]))
-		self.theta_c = np.zeros(len(self.X[0]))
-		self.theta_e = np.zeros(len(self.X[0]))
-		self.theta_a = np.zeros(len(self.X[0]))
-		self.theta_n = np.zeros(len(self.X[0]))
+		self.compute_Y()
+		self.theta = np.zeros(len(self.X[0]))
+		
 
 	def load_data(self, file):
 		self.data = pd.read_csv(file)
@@ -47,20 +33,8 @@ class LogisticRegression:
 			else:
 				self.X = np.vstack([self.X, features])
 
-	def compute_Y_o(self):
-		self.Y_o = np.array(self.data['class_o'])
-
-	def compute_Y_c(self):
-		self.Y_c = np.array(self.data['class_c'])
-
-	def compute_Y_e(self):
-		self.Y_e = np.array(self.data['class_e'])
-
-	def compute_Y_a(self):
-		self.Y_a = np.array(self.data['class_a'])
-
-	def compute_Y_n(self):
-		self.Y_n = np.array(self.data['class_n'])
+	def compute_Y(self):
+		self.Y = np.array(self.data[self.class_type])
 
 	def sigmoid(self, z):
 		return float(1.0 / float((1.0 + math.exp(-1.0*z))))
@@ -120,83 +94,43 @@ class LogisticRegression:
 		return new_theta
 
 	def logistic_regression_o(self,alpha,num_iters):
-		m = len(self.Y_o)
+		m = len(self.Y)
 		for x in range(num_iters):
 			# print('before:', self.theta)
-			new_theta = self.gradient_descent(self.X,self.Y_o,self.theta_o,m,alpha)
-			self.theta_o = new_theta
+			new_theta = self.gradient_descent(self.X,self.Y,self.theta,m,alpha)
+			self.theta = new_theta
 			# print('after:', self.theta)
 			if x % 100 == 0:
-				self.cost_function(self.X,self.Y_o,self.theta_o,m)
+				self.cost_function(self.X,self.Y,self.theta,m)
 				# print(self.theta)
 				# print(self.cost_function(self.X,self.Y_o,self.theta,m))
 
-	def logistic_regression_c(self,alpha,num_iters):
-		m = len(self.Y_c)
-		for x in range(num_iters):
-			# print('before:', self.theta)
-			new_theta = self.gradient_descent(self.X,self.Y_c,self.theta_c,m,alpha)
-			self.theta_c = new_theta
-			# print('after:', self.theta)
-			if x % 100 == 0:
-				self.cost_function(self.X,self.Y_c,self.theta_c,m)
 
-	def logistic_regression_e(self,alpha,num_iters):
-		m = len(self.Y_e)
-		for x in range(num_iters):
-			# print('before:', self.theta)
-			new_theta = self.gradient_descent(self.X,self.Y_e,self.theta_e,m,alpha)
-			self.theta_e = new_theta
-			# print('after:', self.theta)
-			if x % 100 == 0:
-				self.cost_function(self.X,self.Y_e,self.theta_e,m)
-
-	def logistic_regression_a(self,alpha,num_iters):
-		m = len(self.Y_a)
-		for x in range(num_iters):
-			# print('before:', self.theta)
-			new_theta = self.gradient_descent(self.X,self.Y_o,self.theta_a,m,alpha)
-			self.theta_a = new_theta
-			# print('after:', self.theta)
-			if x % 100 == 0:
-				self.cost_function(self.X,self.Y_o,self.theta_a,m)
-
-	def logistic_regression_n(self,alpha,num_iters):
-		m = len(self.Y_n)
-		for x in range(num_iters):
-			# print('before:', self.theta)
-			new_theta = self.gradient_descent(self.X,self.Y_o,self.theta_n,m,alpha)
-			self.theta_n = new_theta
-			# print('after:', self.theta)
-			if x % 100 == 0:
-				self.cost_function(self.X,self.Y_o,self.theta_n,m)
-
-lg_train = LogisticRegression()
-
+lg = LogisticRegression('original_wordvector_final.csv', 'class_c')
 
 alpha = 0.2
 
 iterations = 2
 
-# from sklearn.linear_model import LogisticRegression as LG
+from sklearn.linear_model import LogisticRegression as LG
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support
-# from sklearn.cross_validation import train_test_split
-# x_train, x_test, y_o_train, y_o_test = train_test_split(lg.X, lg.Y_o,test_size = 0.2, random_state = 42, stratify=lg.Y_o)
+from sklearn.model_selection import train_test_split
 
+x_train, x_test, y_train, y_test = train_test_split(lg.X, lg.Y,test_size = 0.2, random_state = 42, stratify=lg.Y)
 
-# iterlist = [1, 5, 10, 20, 50]
-# conf_matrix = []
-# fscore = []
+iterlist = [1, 5, 10, 20, 50]
+conf_matrix = []
+fscore = []
 
-# for i in range(len(iterlist)):	
-# 	lg_o = LG(max_iter = iterlist[i])
-# 	lg_o.fit(x_train,y_o_train)
-# 	y_o_predict = lg_o.predict(x_test)
-# 	conf_matrix.append(confusion_matrix(y_o_test, y_o_predict))
-# 	fscore.append(precision_recall_fscore_support(y_o_test, y_o_predict, average = 'micro')[2])
-# print(conf_matrix)
-# print(fscore)
+for i in range(len(iterlist)):	
+	lg_o = LG(max_iter = iterlist[i])
+	lg_o.fit(x_train,y_train)
+	y_predict = lg_o.predict(x_test)
+	conf_matrix.append(confusion_matrix(y_test, y_predict))
+	fscore.append(precision_recall_fscore_support(y_test, y_predict, average = 'micro')[2])
+print(conf_matrix)
+print(fscore)
 
 # lg_c = LG()
 # lg_e = LG()
@@ -209,58 +143,53 @@ from sklearn.metrics import precision_recall_fscore_support
 # lg_n.fit(lg.X,lg.Y_n)
 
 
-lg_train.logistic_regression_o(alpha,iterations)
-lg_train.logistic_regression_c(alpha,iterations)
-lg_train.logistic_regression_e(alpha,iterations)
-lg_train.logistic_regression_a(alpha,iterations)
-lg_train.logistic_regression_n(alpha,iterations)
+# lg_train.logistic_regression(alpha,iterations)
+# lg = LogisticRegression('wordvector_test.csv')
 
-lg = LogisticRegression('wordvector_test.csv')
+# y_o_predict = []
+# for x in lg.X:
+# 	y_o_predict.append(lg_train.hypothesis(lg.theta_o, x))
+# accurate = 0
+# for i in range(len(y_o_predict)):
+# 	if (lg.Y_o[i] == 1 and y_o_predict[i] >= 0.5) or (lg.Y_o[i] == 0 and y_o_predict[i] < 0.5):
+# 		accurate += 1
+# print('Y_o accuracy:', accurate/len(y_o_predict))
 
-y_o_predict = []
-for x in lg.X:
-	y_o_predict.append(lg_train.hypothesis(lg.theta_o, x))
-accurate = 0
-for i in range(len(y_o_predict)):
-	if (lg.Y_o[i] == 1 and y_o_predict[i] >= 0.5) or (lg.Y_o[i] == 0 and y_o_predict[i] < 0.5):
-		accurate += 1
-print('Y_o accuracy:', accurate/len(y_o_predict))
+# y_c_predict = []
+# for x in lg.X:
+# 	y_c_predict.append(lg_train.hypothesis(lg.theta_c, x))
+# accurate = 0
+# for i in range(len(y_c_predict)):
+# 	if (lg.Y_c[i] == 1 and y_c_predict[i] >= 0.5) or (lg.Y_c[i] == 0 and y_c_predict[i] < 0.5):
+# 		accurate += 1
+# print('Y_c accuracy:', accurate/len(y_c_predict))
 
-y_c_predict = []
-for x in lg.X:
-	y_c_predict.append(lg_train.hypothesis(lg.theta_c, x))
-accurate = 0
-for i in range(len(y_c_predict)):
-	if (lg.Y_c[i] == 1 and y_c_predict[i] >= 0.5) or (lg.Y_c[i] == 0 and y_c_predict[i] < 0.5):
-		accurate += 1
-print('Y_c accuracy:', accurate/len(y_c_predict))
+# y_e_predict = []
+# for x in lg.X:
+# 	y_e_predict.append(lg_train.hypothesis(lg.theta_e, x))
+# accurate = 0
+# for i in range(len(y_e_predict)):
+# 	if (lg.Y_e[i] == 1 and y_e_predict[i] >= 0.5) or (lg.Y_e[i] == 0 and y_e_predict[i] < 0.5):
+# 		accurate += 1
+# print('Y_e accuracy:', accurate/len(y_e_predict))
 
-y_e_predict = []
-for x in lg.X:
-	y_e_predict.append(lg_train.hypothesis(lg.theta_e, x))
-accurate = 0
-for i in range(len(y_e_predict)):
-	if (lg.Y_e[i] == 1 and y_e_predict[i] >= 0.5) or (lg.Y_e[i] == 0 and y_e_predict[i] < 0.5):
-		accurate += 1
-print('Y_e accuracy:', accurate/len(y_e_predict))
+# y_a_predict = []
+# for x in lg.X:
+# 	y_a_predict.append(lg_train.hypothesis(lg.theta_a, x))
+# accurate = 0
+# for i in range(len(y_a_predict)):
+# 	if (lg.Y_a[i] == 1 and y_a_predict[i] >= 0.5) or (lg.Y_a[i] == 0 and y_a_predict[i] < 0.5):
+# 		accurate += 1
+# print('Y_a accuracy:', accurate/len(y_a_predict))
 
-y_a_predict = []
-for x in lg.X:
-	y_a_predict.append(lg_train.hypothesis(lg.theta_a, x))
-accurate = 0
-for i in range(len(y_a_predict)):
-	if (lg.Y_a[i] == 1 and y_a_predict[i] >= 0.5) or (lg.Y_a[i] == 0 and y_a_predict[i] < 0.5):
-		accurate += 1
-print('Y_a accuracy:', accurate/len(y_a_predict))
-
-y_n_predict = []
-for x in lg.X:
-	y_n_predict.append(lg_train.hypothesis(lg.theta_n, x))
-accurate = 0
-for i in range(len(y_n_predict)):
-	if (lg.Y_n[i] == 1 and y_n_predict[i] >= 0.5) or (lg.Y_n[i] == 0 and y_n_predict[i] < 0.5):
-		accurate += 1
-print('Y_n accuracy:', accurate/len(y_n_predict))
+# y_n_predict = []
+# for x in lg.X:
+# 	y_n_predict.append(lg_train.hypothesis(lg.theta_n, x))
+# accurate = 0
+# for i in range(len(y_n_predict)):
+# 	if (lg.Y_n[i] == 1 and y_n_predict[i] >= 0.5) or (lg.Y_n[i] == 0 and y_n_predict[i] < 0.5):
+# 		accurate += 1
+# print('Y_n accuracy:', accurate/len(y_n_predict))
 
 
 # conf_matrix_o = confusion_matrix(lg.Y_o, y_o_predict)
