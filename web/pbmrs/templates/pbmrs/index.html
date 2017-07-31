@@ -5,56 +5,50 @@ Homepage
 {% endblock %}
 
 {% block body %}
-<!--
-<h3 id="startMsg"> Log In to determine your personality</h3>
-<p id="state" class="userInfo"></p>
-<input type="submit" value="Determin my personality" id="ajax_btn">
+	<div class="ui grid">
+	  <div class="twelve wide column">
+			<div class="ui">
+			</div>
+		</div>
+	  <div class="sixteen wide column">
+			{% if recommended_songs %}
+			<h3 id="heading">Recommended Songs:</h3>
+				<div class="ui five cards">
+					{% for rsong in recommended_songs %}
+					<div class="ui card">
+					  <div class="image">
+							{% load static %}
+							<img src="{% static "/pbmrs/img/music_cover.png" %}">
+					  </div>
+					  <div class="content">
+					    <a class="header">{{ rsong.song }}</a>
+					    <div class="meta">
+					      <span class="date">Uploaded in 2013</span>
+					    </div>
+					    <div class="description">
+								{{ rsong.artist }}
+					    </div>
+					  </div>
+					</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
 
- <form method='POST' action= '/'id="form" name="myForm">
-	 {% csrf_token %}
-	 <input type="hidden", name="posts" id="tests">
-	<input type="submit" value="Determine my personality" id="submit">
-</form>
- -->
-<!-- <h3 id="personalityInfo"></h3> -->
-<!--
-<h4 id="personality"> {{classifier}}</h4>
+		<div class="ui segment" id="login-segment">
+		  <p>Login to listen songs of your choice</p>
+		</div>
+		<div class="ui modal">
+		  <div class="header">Header</div>
+		  <div class="content">
+		    <p></p>
+		  </div>
+		  <div class="actions">
+		    <div class="ui approve button">Approve</div>
+		    <div class="ui button">Neutral</div>
+		    <div class="ui cancel button">Cancel</div>
+		  </div>
+		</div>
 
-<h4 id="ajax_response"> </h4>
- <h3 id="recommendation"></h3>
-   <h2>Test:{{test}}</h2> -->
-
- <div class="container">
-   <h3 id="heading">Log in to view your profile</h3>
-   <div id="profile"></div>
-   <div id="feed"></div>
- </div>
-
-<!--
-<h2 id='posts' style="display:none"><h2>
-<script type="text/javascript">
-function extractPost(){
-//var x = document.getElementById('posts');
-//var elem = document.getElementById('tests');
-//elem.value = x.innerHTML;
-	var x = "loop";
-}
-setTimeout(function(){extractPost()},3000);
-//var form = document.getElementById("form");
-//console.log(form);
-$('#ajax_btn').click(function(){
-
-	console.log("clicked");
-	$.ajax({
-		method: 'GET',
-		url: '/classify_personality',
-		data: 'posts='+$('#posts').html(),
-		success: function(data){
-			console.log(data);
-			$('#ajax_response').text(data)
-		}
-	});
-});
-</script>
--->
-{% endblock %}
+{% endblock body%}

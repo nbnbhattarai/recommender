@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Recommendation,Music,User,UserMusic
+from .models import RecommendationModel,MusicModel,UserModel,UserMusicModel, SessionModel
 
 
-admin.site.register(Music)
-admin.site.register(User)
-admin.site.register(UserMusic)
-admin.site.register(Recommendation)
+admin.site.register(MusicModel)
+admin.site.register(UserModel)
+admin.site.register(UserMusicModel)
+admin.site.register(RecommendationModel)
+admin.site.register(SessionModel)
