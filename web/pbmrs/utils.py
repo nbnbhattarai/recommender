@@ -1,8 +1,8 @@
 from personalityClassifier.naivebayes import NaiveBayes
-from .database_handler import get_utility_matrix, get_music_from_id
-from recommendation_engine.recommendation import Recommendation, get_similar_user_matrix
+from .database_handler import get_utility_matrix, get_music_from_id, get_user_matrix
+from recommendation_engine.recommendation import Recommendation, get_similar_user_matrix, model_evaluation
 from .models import SessionModel
-import random, string, operator
+import random, string, operator, math, copy
 
 def get_personality_from_status_data(status_data):
     naivebayes = NaiveBayes()
@@ -32,15 +32,47 @@ def update_user_data(user, posts):
 
 def get_recommendation(user):
     utility_matrix = get_utility_matrix()
-    print('utility_matrix: \n')
-    lst = [list(tmp) for tmp in utility_matrix]
-    for kk in lst:
-        print(kk)
-    print('utility_matrix row:', utility_matrix.shape[0], ' cols: ', utility_matrix.shape[1])
-    _, similar_user_matrix = get_similar_user_matrix(utility_matrix)
+    user_matrix = get_user_matrix()
+
+    test_percentage = 0.2
+    test_rows, test_cols = math.ceil(test_percentage * utility_matrix.shape[0]), math.ceil(test_percentage * utility_matrix.shape[1])
+
+    _, similar_user_matrix = get_similar_user_matrix(user_matrix)
+
+    actual_rating_mat = copy.deepcopy(utility_matrix[:test_rows, :test_cols])
+    utility_matrix_backup = copy.deepcopy(utility_matrix)
+    utility_matrix[:test_rows, :test_cols] = 0
+    _, similar_rating_matrix = get_similar_user_matrix(utility_matrix)
+
+
     print('similar_user_matrix row:', similar_user_matrix.shape[0], ' cols: ', similar_user_matrix.shape[1])
     recommendation = Recommendation()
-    collaborative_success, collaborative_result, combined_result = recommendation.collaborative_personality(similar_user_matrix, utility_matrix)
+
+    collaborative_success, collaborative_result, combined_result = recommendation.collaborative_personality(similar_rating_matrix, utility_matrix)
+    train_rating_matrix_cf = copy.deepcopy(collaborative_result[:test_rows, :test_cols])
+    print('cf model evaluation: ', model_evaluation(train_rating_matrix_cf, actual_rating_mat))
+
+    train_rating_matrix_cf_combined = copy.deepcopy(combined_result[:test_rows, :test_cols])
+    print('cf_combined model evaluation: ', model_evaluation(train_rating_matrix_cf_combined, actual_rating_mat))
+
+
+    collaborative_success_u, collaborative_result_u, combined_result_u = recommendation.collaborative_personality(similar_user_matrix, utility_matrix)
+    train_rating_matrix_cf_u = copy.deepcopy(collaborative_result_u[:test_rows, :test_cols])
+    print('cf model evaluation: ', model_evaluation(train_rating_matrix_cf_u, actual_rating_mat))
+
+    train_rating_matrix_cf_combined_u = copy.deepcopy(combined_result_u[:test_rows, :test_cols])
+    print('cf_combined model evaluation: ', model_evaluation(train_rating_matrix_cf_combined_u, actual_rating_mat))
+
+    # latent_result = recommendation.latent_factor(utility_matrix)
+    # train_rating_matrix_latent = copy.deepcopy(latent_result[:test_rows, :test_cols])
+    # print('latent_model evaluation: ', model_evaluation(train_rating_matrix_latent, actual_rating_mat))
+    #
+    # baseline_result,_ = recommendation.global_baseline(utility_matrix)
+    # train_rating_matrix_baseline = copy.deepcopy(baseline_result[:test_rows, :test_cols])
+    # print('baseline_model evaluation: ', model_evaluation(train_rating_matrix_baseline, actual_rating_mat))
+
+    # if collaborative_success == None:
+    #     combined_result,_ = recommendation.global_baseline(utility_matrix)
     print('success?', collaborative_success, collaborative_result, combined_result)
     user_row = combined_result[user.pk-1]
     sorted_songs = sorted(enumerate(user_row), key=operator.itemgetter(1), reverse=True)

@@ -60,6 +60,7 @@ function testAPI(){
           console.log(posts)
           var json_posts = JSON.stringify(posts);
           var to_django = {'name': response.name, 'id': response.id, 'posts' : json_posts };
+					console.log('csrf token: ' + getCookie('csrftoken'));
           post_to_url('http://localhost:8000', to_django)
           console.log(to_django);
         }

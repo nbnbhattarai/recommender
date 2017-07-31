@@ -56,6 +56,13 @@ def get_utility_matrix():
         utility_matrix[usermusic_data.user.pk-1][usermusic_data.music.pk-1] = usermusic_data.rating
     return utility_matrix
 
+def get_user_matrix():
+	user_matrix = np.zeros((UserModel.objects.count(), 5))
+	for user_data in UserModel.objects.all():
+		user_matrix[user_data.pk-1] = [user_data.op, user_data.cons, user_data.ex, user_data.ag, user_data.neu]
+	return user_matrix
+
+
 def add_recommendation(utility_matrix):
     all_recommendations = RecommendationModel.objects.all()
     for user_id in range(utility_matrix.shape[0]):

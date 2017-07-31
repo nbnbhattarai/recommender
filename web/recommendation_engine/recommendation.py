@@ -56,52 +56,56 @@ class Recommendation():
 				if utility_matrix[j][i] == 0:
 					utility_matrix_2[j][i] = utility_matrix_copy[j][i]
 
-		print('baseline:',utility_matrix_copy, '\nNext baseline: ', utility_matrix_2)
+		#print('baseline:',utility_matrix_copy, '\nNext baseline: ', utility_matrix_2)
 		return utility_matrix_copy, utility_matrix_2
 
 	def collaborative_personality(self, user_similarity_matrix, utility_matrix, k=2):
-		print('usre_matrix:', utility_matrix)
+		#print('usre_matrix:', utility_matrix)
 		combined_matrix = copy.deepcopy(utility_matrix)
 		global_baseline_result = self.global_baseline(utility_matrix)[0]
 		temp_matrix = utility_matrix - global_baseline_result
 		for i in range(user_similarity_matrix.shape[0]):
 			similar = list(user_similarity_matrix[i])
-			print('similar:',similar)
+			#print('similar:',similar)
 			music_rating_row = list(utility_matrix[i])
 			for j in range(len(music_rating_row)):
 				if music_rating_row[j] == 0:
 					nearest_neighbor_rating = list(utility_matrix[:,j])
 					nearest_neighbor_temp_mat = list(temp_matrix[:,j])
-					# for nl in range(len(nearest_neighbor_rating)):
-					# 	if nearest_neighbor_rating[nl] == 0:
-					# 		similar[nl] = 0
+					for nl in range(len(nearest_neighbor_rating)):
+						if nearest_neighbor_rating[nl] == 0:
+							similar[nl] = 0
 					nonzero_count = 0
 					for sm in similar:
 						if sm != 0:
 							nonzero_count += 1
-					print('similar: ',j, ' : ' , similar)
-					print('nonzero_count: ', nonzero_count)
+					#print('similar: ',j, ' : ' , similar)
+					#print('nonzero_count: ', nonzero_count)
 					# print(len([ i for i in similar if i != 0]) < k)
 					#if (len([ i for i in similar if i != 0]) < k):
-					if (nonzero_count < k):
+					if nonzero_count == 0:
 						print('k :', k)
 						print('fucking Collaborative')
 						print('Collaborative Failded!')
-						return None,None,None
+						continue
+						#return None,None,None
+					if nonzero_count < k:
+						k = nonzero_count
+
 					similar_k = heapq.nlargest(k, similar)
-					print('fucking similar_k : ', similar_k)
+					#print('fucking similar_k : ', similar_k)
 					similar_k_index = []
 					for sk in similar_k:
 						index = similar.index(sk)
 						if index in similar_k_index:
 							index = similar.index(sk, index + 1)
 						similar_k_index.append(index)
-					print('fucking similar_k_index : ', similar_k)
+					#print('fucking similar_k_index : ', similar_k)
 					product_sim = 0
 					sum_sim = 0
-					print('music_rating_row:', music_rating_row)
-					print('nearest_neighbor_rating:', nearest_neighbor_rating)
-					print(similar_k_index)
+					#print('music_rating_row:', music_rating_row)
+					#print('nearest_neighbor_rating:', nearest_neighbor_rating)
+					#print(similar_k_index)
 					for sk in similar_k_index:
 						product_sim += ( similar[sk] * nearest_neighbor_rating[sk] )
 						sum_sim += similar[sk]
@@ -117,7 +121,7 @@ class Recommendation():
 					combined_matrix[i,j] = result
 		return True,utility_matrix, combined_matrix
 
-	def latent_factor(self,utility_matrix,K=2,steps=5000,alpha=0.0002,beta=0.02):
+	def latent_factor(self,utility_matrix,K=2,steps=1000,alpha=0.0002,beta=0.02):
             R = copy.deepcopy(utility_matrix)
             N = utility_matrix.shape[0]
             M = utility_matrix.shape[1]
@@ -146,8 +150,8 @@ class Recommendation():
 def model_evaluation(predicted, actual):
 	count = 0.0
 	sum_me = 0.0
-	print('predicted: \n', predicted, ' and \n actual :\n', actual)
-	print('\npredicted val:', predicted[0])
+	#print('predicted: \n', predicted, ' and \n actual :\n', actual)
+	#print('\npredicted val:', predicted[0])
 	for i in range(predicted.shape[0]):
 		for j in range(predicted.shape[1]):
 			if actual[i][j] != 0:
