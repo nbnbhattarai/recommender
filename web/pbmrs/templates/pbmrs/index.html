@@ -1,17 +1,26 @@
 {% extends 'pbmrs/base.html' %}
 
 {% block title %}
-Homepage
-{% endblock %}
+{{ title }}
+{% endblock title %}
 
 {% block body %}
-	<div class="ui grid">
-	  <div class="twelve wide column">
-			<div class="ui">
+	<!-- {% if not login_user %} -->
+	<div class="container">
+		<div class="ui vertical aligned center segment landing inverted">
+			<div class="fluid">
+				<div class="ui container text">
+					<h1 class="ui header inverted">Listen to your favroite Music</h1>
+				</div>
 			</div>
 		</div>
-	  <div class="sixteen wide column">
-			{% if recommended_songs %}
+	</div>
+	<!-- {% else %}
+	{% endif %} -->
+	{% if login_user %}
+	{% if recommended_songs %}
+	<div class="ui container recommendation_list">
+	  <div class="sixteen wide column" style="padding:10px;">
 			<h3 id="heading">Recommended Songs:</h3>
 				<div class="ui five cards">
 					{% for rsong in recommended_songs %}
@@ -32,23 +41,8 @@ Homepage
 					</div>
 					{% endfor %}
 				</div>
+			</div>
+		</div>
 			{% endif %}
-		</div>
-	</div>
-
-		<div class="ui segment" id="login-segment">
-		  <p>Login to listen songs of your choice</p>
-		</div>
-		<div class="ui modal">
-		  <div class="header">Header</div>
-		  <div class="content">
-		    <p></p>
-		  </div>
-		  <div class="actions">
-		    <div class="ui approve button">Approve</div>
-		    <div class="ui button">Neutral</div>
-		    <div class="ui cancel button">Cancel</div>
-		  </div>
-		</div>
-
+	{% endif %}
 {% endblock body%}
