@@ -124,48 +124,54 @@ class Recommendation():
 					result = product_sim/sum_sim
 					combined_matrix[i,j] = result
 		return True,cf_matrix, combined_matrix
+        
 
 	def latent_factor(self,utility_matrix,K=2,steps=5000,alpha=0.0002,beta=0.02):
-            R = copy.deepcopy(utility_matrix)
-            N = utility_matrix.shape[0]
-            M = utility_matrix.shape[1]
-            np.random.seed(0)
-            P = np.random.rand(N,K)
-            Q = np.random.rand(M,K)
-            Q = Q.T
-            for step in range(steps):
-                for i in range(utility_matrix.shape[0]):
-                    for j in range(utility_matrix.shape[1]):
-                        if R[i][j] > 0:
-                            eij = R[i][j] - np.dot(P[i,:],Q[:,j])
-                            for k in range(K):
-                                eij = eij + (beta/2) * (pow(P[i][k],2) + pow(Q[k][j],2))
-                            for k in range(K):
-                                P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j]- beta * P[i][k])
-                                Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
-                e = 0
-               #for i in range(utility_matrix.shape[0]):
-               #   for j in range(utility_matrix.shape[1]):
-               #        if R[i][j] > 0:
-               #            e = e + pow(R[i][j]-np.dot(P[i,:],Q[:,j]),2)
-               #            for k in range(K):
-               #                e = e + (beta/2) * (pow(P[i][k],2) + pow(Q[k][j],2))
-               #                if e < 0.001:
-               #                    break
-            return np.dot(P,Q)
-#def model_evaluation(predicted, actual):
-#    count = 0.0
-#    sum_me = 0.0
-#    #print('predicted: \n', predicted, ' and \n actual :\n', actual)
-#    #print('\npredicted val:', predicted[0])
-#    for i in range(predicted.shape[0]):
-#		if actual[i][j] != 0:
-#			count += 1
-#			# print('squared: ', (actual[i, j] - predicted[i, j])**2)
-#			sum_me += (actual[i,j] - predicted[i,j])**2
-#    rmse = math.sqrt(sum_me/count)
-	    # print('rmse:', rmse)
-#	    return rmse
+		R = copy.deepcopy(utility_matrix)
+		N = utility_matrix.shape[0]
+		M = utility_matrix.shape[1]
+		np.random.seed(0)
+		P = np.random.rand(N,K)
+		Q = np.random.rand(M,K)
+		Q = Q.T
+		for step in range(steps):
+		    for i in range(utility_matrix.shape[0]):
+		        for j in range(utility_matrix.shape[1]):
+		            if R[i][j] > 0:
+		                eij = R[i][j] - np.dot(P[i,:],Q[:,j])
+		                for k in range(K):
+		                    eij = eij + (beta/2) * (pow(P[i][k],2) + pow(Q[k][j],2))
+		                for k in range(K):
+		                    P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j]- beta * P[i][k])
+		                    Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
+		    e = 0
+		   #for i in range(utility_matrix.shape[0]):
+		   #   for j in range(utility_matrix.shape[1]):
+		   #        if R[i][j] > 0:
+		   #            e = e + pow(R[i][j]-np.dot(P[i,:],Q[:,j]),2)
+		   #            for k in range(K):
+		   #                e = e + (beta/2) * (pow(P[i][k],2) + pow(Q[k][j],2))
+		   #                if e < 0.001:
+		   #                    break
+		return np.dot(P,Q)
+
+	def model_evaluation(self,predicted, actual):
+		count = 0.0
+		sum_me = 0.0
+
+		#print('predicted: \n', predicted, ' and \n actual :\n', actual)
+
+		#print('\npredicted val:', predicted[0])
+		for i in range(predicted.shape[0]):
+			for j in range(predicted.shape[1]):
+				if actual[i][j] != 0:
+					count += 1
+					#print('squared: ', (actual[i, j] - predicted[i, j])**2)
+					sum_me += (actual[i,j] - predicted[i,j])**2
+		rmse = math.sqrt(sum_me/count)
+
+		#print('rmse:', rmse)
+		return rmse
 
 if __name__=='__main__':
 
@@ -181,27 +187,35 @@ if __name__=='__main__':
     
     _, global_result= recommendation.global_baseline(utility_matrix)
     print("Global Baseline:\n",global_result[:test_rows,:test_cols])
+    print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
     
     latent_result= recommendation.latent_factor(utility_matrix,steps=5000,K=21)
     print("Latent factor:\n",latent_result[:test_rows,:test_cols])
+    print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
     
     _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
     state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=2)
     if state:
         print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
+        print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
         print("Collaborative & Global with user rating matrix:\n",cf_combined[:test_rows,:test_cols])
+        print("RMSE CF & Global with user rating matrix:",recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat))
     
     _,similar_user_pwise = get_similar_user_matrix(user_matrix)
     state, cf_per, cf_combined_per = recommendation.collaborative_filtering(similar_user_pwise,utility_matrix,k=5)
     if state:
         print("Collaborative with personality rating matrix:\n",cf_per[:test_rows,:test_cols])
+        print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_per[:test_rows,:test_cols],actual_rating_mat))
         print("Collaborative & Global with personality rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
+        print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_combined_per[:test_rows,:test_cols],actual_rating_mat))
 
     avg_similar = (0.75 * similar_user_rwise + 0.25 * similar_user_pwise)/(0.75+0.25)
-    state, cf_per, cf_combined_per = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
+    state, cf_avg, cf_combined_avg = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
     if state:
         print("Collaborative with avg rating matrix:\n",cf_per[:test_rows,:test_cols])
+        print("RMSE CF with avg rating matrix:",recommendation.model_evaluation(cf_avg[:test_rows,:test_cols],actual_rating_mat))
         print("Collaborative & Global with avg rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
+        print("RMSE CF & Global with avg rating matrix:",recommendation.model_evaluation(cf_combined_avg[:test_rows,:test_cols],actual_rating_mat))
     print("Utitlity matrix:\n ",utility_matrix)
     print("Similar users with rating matrix:\n",similar_user_rwise)
     print("Similar users with personality matrix:\n",similar_user_pwise)
