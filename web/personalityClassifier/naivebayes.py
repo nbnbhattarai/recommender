@@ -236,11 +236,18 @@ class NaiveBayes: #Classification algorithm for personality identification based
             op *= i
         #print("Extraversion: ",math.modf(math.log(ep))[0]* -1, "Neuroticism:",math.modf(math.log(np))[0] * -1 ,"Agreebleness:",math.modf(math.log(ap))[0] * -1 ,"Conscientiousness:",math.modf(math.log(cp))[0] * -1 ,"Openness:",math.modf(math.log(op))[0] * -1 )
         verdict = " "
-        extraversion = math.modf(math.log(ep))[0] * -1
-        neuroticism = math.modf(math.log(np))[0] * -1
-        agreebleness = math.modf(math.log(ap))[0] * -1
-        conscientiouness  = math.modf(math.log(cp))[0] * -1
-        openness = math.modf(math.log(op))[0] * -1
+        try:
+            extraversion = math.modf(math.log(ep))[0] * -1
+            neuroticism = math.modf(math.log(np))[0] * -1
+            agreebleness = math.modf(math.log(ap))[0] * -1
+            conscientiouness  = math.modf(math.log(cp))[0] * -1
+            openness = math.modf(math.log(op))[0] * -1
+        except:
+            extraversion = 0
+            neuroticism = 0
+            agreebleness = 0
+            conscientiouness  = 0
+            openness = 0
         # if extraversion >= 0.5:
         #     verdict += "Extraversion "
         # if neuroticism >= 0.5:

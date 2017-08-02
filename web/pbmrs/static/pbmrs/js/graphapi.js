@@ -76,13 +76,13 @@ function testAPI(){
 function setElements(isLoggedIn){
 	if(isLoggedIn){
     document.getElementById('fb-logout-btn').style.display = 'block';
-    document.getElementById('login-segment').style.display = 'none';
+    // document.getElementById('login-segment').style.display = 'none';
     //document.getElementById('feed').style.display = 'block';
     document.getElementById('fb-login-btn').style.display = 'none';
     //document.getElementById('heading').style.display = 'none';
 	}else{
     document.getElementById('fb-logout-btn').style.display = 'none';
-    document.getElementById('login-segment').style.display = 'block';
+    // document.getElementById('login-segment').style.display = 'block';
     //document.getElementById('feed').style.display = 'none';
     document.getElementById('fb-login-btn').style.display = 'block';
     //document.getElementById('heading').style.display = 'block';
@@ -193,4 +193,8 @@ function getCookie2(name) {
     // because unescape has been deprecated, replaced with decodeURI
     //return unescape(dc.substring(begin + prefix.length, end));
     return decodeURI(dc.substring(begin + prefix.length, end));
+}
+function askLogin(){
+  console.log('inside askLogin');
+  $('.ui.modal.login_modal').modal('show');
 }

@@ -6,56 +6,195 @@
 		{% block title %}
 		{% endblock %}
     </title>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-		<!--
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-		-->
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
 		<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
 
-		{% load static %}
-		<link rel="stylesheet" href="{% static 'pbmrs/css/style.css' %}" type="text/css">
-	  <script src="{% static 'pbmrs/js/graphapi.js' %}" type="text/javascript"></script>
+		{%load static %}
+		<link href="{% static 'pbmrs/css/jquery.circliful.css' %}" rel="stylesheet" type="text/css" />
+
+		<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+		{%load static %}
+		<script src="{% static 'pbmrs/js/jquery.circliful.min.js' %}"></script>
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+
+		<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-bootstrap/0.5pre/assets/css/bootstrap.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script> -->
+		{%load static %}
+		<link rel="stylesheet" href="{% static 'pbmrs/css/style.css' %}">
 	</head>
 	<body>
-		<div class="ui secondary pointing menu">
-			<a href="{% url 'home' %}">
-			<div class="item">
-				{% load static %}
-				<img src="{% static 'pbmrs/img/logo.png' %}">
-			</div>
-			</a>
-		  <a class="active item" href="{% url 'home' %}">
-		    Home
-		  </a>
-		  <div class="right menu">
-		    <div class="item" id="fb-login-btn">
-					<fb:login-button
-						id="fb-btn"
-						scope="public_profile,user_posts"
-						onlogin="checkLoginState();">
-					</fb:login-button>
-				</div>
-				<div class="item" id="fb-logout-btn">
-					<div class="ui primary button" onclick="logout()">Logout</div>
-				</div>
-		  </div>
+		<div class="ui inverted vertical masthead center aligned segment">
+				<div class="ui small borderless fixed inverted menu">
+					<div class="ui massive secondary inverted pointing menu">
+						<a href="{% url 'home' %}" class="item">
+								{% load static %}
+								<img src="{% static 'pbmrs/img/logo.png' %}" style="height:30px;width:30px;">
+						</a>
+					  <a class="
+						{% if title == 'home' %}
+							active
+						{% endif %}
+						item" href="{% url 'home' %}">
+							Home
+						</a>
+
+						{% if login_user %}
+						<a class="
+						{% if title == 'profile' %}
+							active
+						{% endif %}
+						item" href="{% url 'profile' %}">
+							    Profile
+						</a>
+						{% endif %}
+						<a class="
+						{% if title == 'about' %}
+							active
+						{% endif %}
+						item" href="{% url 'about' %}">
+							About
+						</a>
+					</div>
+					  <div class="right item" style="padding-right:10px;">
+							<div class="ui transparent icon input">
+								<input type="text" placeholder="Search Music...">
+								<i class="search link icon"></i>
+							</div>
+
+							<a class="item" id="fb-login-btn" onclick="askLogin();">
+								Login
+								<!-- <button class="ui primary button" onclick="askLogin();">
+								  Login
+								</button> -->
+							</a>
+							{% if login_user %}
+						  <div class="ui pointing dropdown link item" id="fb-logout-btn">
+								{% load static %}
+								<img class="ui circular middle aligned mini image" src="{% static 'pbmrs/img/blank-profile.png' %}">
+						    <span class="text"> </span>
+						    <i class="dropdown icon"></i>
+						    <div class="menu">
+						      <div class="header">{{ login_user.name }}</div>
+									<div class="item"><a href="{% url 'profile' %}">Profile</a></div>
+						      <div class="divider"></div>
+						      <div class="header">Actions</div>
+						      <div class="item" onclick="logout();">LogOut</div>
+						    </div>
+						  </div>
+							{% else %}
+							<div id="fb-logout-btn">
+							</div>
+							{% endif %}
+						</div>
+					</div>
 		</div>
-	<div class="ui container" style="padding:10px;">
+		<!-- <div class="ui menu">
+			<div class="ui pointing dropdown link item">
+				<span class="text">Nabin Bhattarai</span>
+				<i class="dropdown icon"></i>
+				<div class="menu">
+					<div class="item">Logout</div>
+					<div class="divider"></div>
+					<div class="item">Profile</div>
+				</div>
+			</div>
+		</div> -->
+		<!-- <div class="ui text container" style="height:600px;background:#000000' %}">
+			<h1 class="ui inverted header">
+				Listen your favroite music
+			</h1>
+			<h1>
+				Explore music with your social media profile.
+			</h1>
+		</div> -->
+
+		<!-- Login Modal -->
+		<div class="ui container">
+			<div class="ui modal login_modal">
+			  <div class="header">
+			    Login with
+			  </div>
+			  <div class="content">
+					<div style="padding:5px;">
+						<fb:login-button
+							id="fb-btn"
+							scope="public_profile,user_posts"
+							onlogin="checkLoginState();">
+						</fb:login-button>
+					</div>
+				</div>
+				<div class="actions">
+					<div class="ui red cancle button">
+						Close
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container inverted">
+
 		{% block body %}
 		{% endblock body%}
 	</div>
+	</div>
 		</div>
 	</body>
+	{% if title == 'profile' %}
+		{% if login_user %}
+			<script type="text/javascript">
+			$("#op-circle").circliful({
+			    animationStep: 5,
+			    foregroundBorderWidth: 5,
+			    backgroundBorderWidth: 15,
+			    percent: 80,
+			    halfCircle: 1,
+			});
+			$("#neu-circle").circliful({
+					animationStep: 5,
+					foregroundBorderWidth: 5,
+					backgroundBorderWidth: 15,
+					percent: 80,
+					halfCircle: 1,
+			});
+
+			$("#ex-circle").circliful({
+			    animationStep: 5,
+			    foregroundBorderWidth: 5,
+			    backgroundBorderWidth: 15,
+			    percent: 80,
+			    halfCircle: 1,
+			});
+
+			$("#ag-circle").circliful({
+			    animationStep: 5,
+			    foregroundBorderWidth: 5,
+			    backgroundBorderWidth: 15,
+			    percent: 80,
+			    halfCircle: 1,
+			});
+
+			$("#cons-circle").circliful({
+			    animationStep: 5,
+			    foregroundBorderWidth: 5,
+			    backgroundBorderWidth: 15,
+			    percent: 80,
+			    halfCircle: 1,
+			});
+			</script>
+		{% endif %}
+	{% endif %}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	{% load static %}
+	<script src="{% static 'pbmrs/js/graphapi.js' %}" type="text/javascript"></script>
 	<footer>
 	<div class="ui inverted vertical footer segment">
     <div class="ui center aligned container">
       <div class="ui stackable inverted divided grid">
         <div class="twenty wide column">
-          <h4 class="ui inverted header">geet</h4>
+          <h4 class="ui inverted header">Personality Based Music Recommendation System</h4>
           <p>Find songs based on your social media profile.</p>
         </div>
       </div>

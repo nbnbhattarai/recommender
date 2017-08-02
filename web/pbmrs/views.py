@@ -30,7 +30,7 @@ class Home(views.View):
             print('recommend_song: ', recommended_songs)
         context = {
             'login_user' : login_user,
-            'title':'Home',
+            'title':'home',
             'recommended_songs' : recommended_songs,
         }
         if sessionid:
@@ -49,7 +49,6 @@ class Home(views.View):
         context = {
             'title':'home',
         }
-        response = render(request, 'pbmrs/index.html',context)
         # Login user or signup with given facebook data
         if user_fbid != None:
             print('Inside user_fbid')
@@ -71,6 +70,10 @@ class Home(views.View):
                 print('New user added!')
             user = get_user_by_fbid(user_fbid)
             new_sessionid = get_session_id_for_user(user)
+            recommended_songs = get_recommendation(user)
+            context['login_user'] = user
+            context['recommended_songs'] = recommended_songs
+            response = render(request, 'pbmrs/index.html',context)
             response.set_cookie('sessionid', new_sessionid)
         return response
 
@@ -89,6 +92,32 @@ class LogOutView(views.View):
             else:
                 print('No Logout!')
         return response
+
+class ProfileView(views.View):
+    def get(self, request, *args, **kwargs):
+        sessionid = request.COOKIES.get('sessionid')
+        login_user = None
+        if sessionid != None:
+            login_user = get_user_from_sessionid(sessionid=sessionid)
+        else:
+            return HttpResponseRedirect(reverse('home'))
+        context = {
+            'login_user' : login_user,
+            'title':'profile',
+        }
+        return render(request, 'pbmrs/profile.html',context)
+
+class AboutView(views.View):
+    def get(self, request, *args, **kwargs):
+        sessionid = request.COOKIES.get('sessionid')
+        login_user = None
+        if sessionid != None:
+            login_user = get_user_from_sessionid(sessionid=sessionid)
+        context = {
+            'login_user' : login_user,
+            'title':'about',
+        }
+        return render(request, 'pbmrs/about.html',context)
 
 def about_personality(request):
     #return HttpResponse(naivebayes.classify("This is awesome"))
