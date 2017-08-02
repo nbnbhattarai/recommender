@@ -63,11 +63,27 @@ class Recommendation():
 		#print('baseline:',utility_matrix_copy, '\nNext baseline: ', utility_matrix_2)
 		return utility_matrix_copy, utility_matrix_2
 
+	def get_normalized_matrix(self,utility_matrix):
+		backup = copy.deepcopy(utility_matrix)
+		for i in range(utility_matrix.shape[0]):
+			sum = utility_matrix.sum(axis=1)[i]
+			row = utility_matrix[i]
+			count = len(row[row!=0])
+			mean = sum / count
+			for j in range(utility_matrix.shape[1]):
+				if backup[i][j] != 0:
+					backup[i][j] -= mean
+		print(backup)
+
 	def collaborative_filtering(self, user_similarity_matrix, utility_matrix, k=5):
+
 		#print('usre_matrix:', utility_matrix)
+		
 		combined_matrix,cf_matrix = copy.deepcopy(utility_matrix),copy.deepcopy(utility_matrix)
 		global_baseline_result = self.global_baseline(utility_matrix)[0]
 		temp_matrix = utility_matrix - global_baseline_result
+		
+
 		for i in range(user_similarity_matrix.shape[0]):
 			similar = list(user_similarity_matrix[i])
 			#print('similar:',similar)
@@ -189,7 +205,7 @@ if __name__=='__main__':
     print("Global Baseline:\n",global_result[:test_rows,:test_cols])
     print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
     
-    latent_result= recommendation.latent_factor(utility_matrix,steps=5000,K=21)
+    latent_result= recommendation.latent_factor(utility_matrix,steps=5000,K=5)
     print("Latent factor:\n",latent_result[:test_rows,:test_cols])
     print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
     
@@ -217,6 +233,7 @@ if __name__=='__main__':
         print("Collaborative & Global with avg rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
         print("RMSE CF & Global with avg rating matrix:",recommendation.model_evaluation(cf_combined_avg[:test_rows,:test_cols],actual_rating_mat))
     print("Utitlity matrix:\n ",utility_matrix)
+    print("Normalized matrix:\n",recommendation.get_normalized_matrix(utility_matrix))
     print("Similar users with rating matrix:\n",similar_user_rwise)
     print("Similar users with personality matrix:\n",similar_user_pwise)
     print("Similar users with avg of both:\n",avg_similar)
