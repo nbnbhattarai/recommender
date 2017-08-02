@@ -64,6 +64,7 @@ class Recommendation():
 		return utility_matrix_copy, utility_matrix_2
 
 	def get_normalized_matrix(self,utility_matrix):
+		original = copy.deepcopy(utility_matrix)
 		backup = copy.deepcopy(utility_matrix)
 		for i in range(utility_matrix.shape[0]):
 			sum = utility_matrix.sum(axis=1)[i]
@@ -73,7 +74,12 @@ class Recommendation():
 			for j in range(utility_matrix.shape[1]):
 				if backup[i][j] != 0:
 					backup[i][j] -= mean
-		print(backup)
+		backup2 = copy.deepcopy(backup)
+		for i in range(utility_matrix.shape[0]):
+			for j in range(utility_matrix.shape[1]):
+				if original[i][j] == 0:
+					backup[i][j] = -10
+		return backup2,backup
 
 	def collaborative_filtering(self, user_similarity_matrix, utility_matrix, k=5):
 
@@ -82,16 +88,20 @@ class Recommendation():
 		combined_matrix,cf_matrix = copy.deepcopy(utility_matrix),copy.deepcopy(utility_matrix)
 		global_baseline_result = self.global_baseline(utility_matrix)[0]
 		temp_matrix = utility_matrix - global_baseline_result
-		
+		normalized_matrix = self.get_normalized_matrix(utility_matrix)[0]
+		similarity_normalized = get_similar_user_matrix(normalized_matrix)[1]
 
 		for i in range(user_similarity_matrix.shape[0]):
 			similar = list(user_similarity_matrix[i])
+			similar_n = list(similarity_normalized[i])
+
 			#print('similar:',similar)
 			music_rating_row = list(utility_matrix[i])
 			for j in range(len(music_rating_row)):
 				if music_rating_row[j] == 0:
 					nearest_neighbor_rating = list(utility_matrix[:,j])
 					nearest_neighbor_temp_mat = list(temp_matrix[:,j])
+					nearest_neighbor_rating_normalized = list(normalized_matrix[:,j])
 					for nl in range(len(nearest_neighbor_rating)):
 						if nearest_neighbor_rating[nl] == 0:
 							similar[nl] = 0
@@ -233,7 +243,7 @@ if __name__=='__main__':
         print("Collaborative & Global with avg rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
         print("RMSE CF & Global with avg rating matrix:",recommendation.model_evaluation(cf_combined_avg[:test_rows,:test_cols],actual_rating_mat))
     print("Utitlity matrix:\n ",utility_matrix)
-    print("Normalized matrix:\n",recommendation.get_normalized_matrix(utility_matrix))
+    print("Normalized matrix:\n",recommendation.get_normalized_matrix(utility_matrix)[1])
     print("Similar users with rating matrix:\n",similar_user_rwise)
     print("Similar users with personality matrix:\n",similar_user_pwise)
     print("Similar users with avg of both:\n",avg_similar)
