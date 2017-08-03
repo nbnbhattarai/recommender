@@ -97,13 +97,38 @@ class ProfileView(views.View):
     def get(self, request, *args, **kwargs):
         sessionid = request.COOKIES.get('sessionid')
         login_user = None
+        login_user_op = None
+        login_user_ag = None
+        login_user_ex = None
+        login_user_cons = None
+        login_user_neu = None
+
         if sessionid != None:
             login_user = get_user_from_sessionid(sessionid=sessionid)
+            if login_user == None:
+                return HttpResponseRedirect(reverse('home'))
+            personality_result = {}
+            login_user_op = login_user.op * 100
+            print('login_user.op',login_user_op)
+            login_user_ag = login_user.ag * 100
+            print('login_user.ag',login_user_ag)
+            login_user_ex = login_user.ex * 100
+            print('login_user.ex',login_user_ex)
+            login_user_cons = login_user.cons * 100
+            print('login_user.cons',login_user_cons)
+            login_user_neu = login_user.neu * 100
+            print('login_user.neu',login_user_neu)
         else:
             return HttpResponseRedirect(reverse('home'))
         context = {
             'login_user' : login_user,
             'title':'profile',
+            'personality_result':personality_result,
+            'login_user_op': login_user_op,
+            'login_user_ag': login_user_ag,
+            'login_user_ex': login_user_ex,
+            'login_user_cons': login_user_cons,
+            'login_user_neu': login_user_neu,
         }
         return render(request, 'pbmrs/profile.html',context)
 

@@ -7,66 +7,67 @@
 
 {% block body %}
 <h3>{{ login_user.name }}</h3>
-<div class="ui container profile-container">
-<div class="ui container" style="padding-left:450px;padding-top:10px;">
-<div class="ui card">
-		<div class="ui tiny circular image">
-			{% load static %}
-			<img src="{% static 'pbmrs/img/blank-profile.png' %}" alt="">
-		</div>
-		<div class="content">
-			<a class="header center">{{ login_user.name }}</a>
-			<div class="description">
-				facebook id : {{ login_user.fb_id }}
-			</div>
+<div class="ui container profile-container" style="text-align:center;width:200px;">
+<!-- <div class="ui container" style="padding-left:450px;padding-top:10px;"> -->
+<div class="ui container">
+	<div class="ui fluid card">
+	<div class="image">
+		{% load static %}
+		<div class="ui tiny image">
+		<img src="{% static 'pbmrs/img/blank-profile.png' %}" alt="">
 	</div>
+	</div>
+	<div class="content">
+		<a class="header">{{ login_user.name }}</a>
+	</div>
+</div>
 </div>
 </div>
 <div class="sixteen wide column" style="padding:10px;">
 	<h3 id="heading">Big 5 personality Traits</h3>
 	<div class="ui five cards">
 		<div class="ui card">
-				<div id="op-circle" data-animation="1" data-animationStep="5" data-percent="5"></div>
+				<div id="op-circle" data-animation="1" data-animationStep="5" data-percent="{{ login_user_op }}"></div>
 					<div class="content">
-						<a class="header center">Openness</a>
+						<a class="header center">Openness to Experience</a>
 						<div class="description">
-							5% Openness
+							{{ login_user_op }}% Openness to Experience
 						</div>
 				</div>
 			</div>
 		<div class="ui card">
-				<div id="neu-circle" data-animation="1" data-animationStep="5" data-percent="73"></div>
-				<div class="content">
-					<a class="header center">Neuroticism</a>
-					<div class="description">
-						73% Openness
-					</div>
-			</div>
-		</div>
-		<div class="ui card">
-				<div id="ex-circle" data-animation="1" data-animationStep="5" data-percent="61"></div>
-				<div class="content">
-					<a class="header center">Extraversion</a>
-					<div class="description">
-						61% Openness
-					</div>
-			</div>
-		</div>
-		<div class="ui card">
-				<div id="ag-circle" data-animation="1" data-animationStep="5" data-percent="38"></div>
-				<div class="content">
-					<a class="header center">Agreebleness</a>
-					<div class="description">
-						38% Openness
-					</div>
-			</div>
-		</div>
-		<div class="ui card">
-				<div id="cons-circle" data-animation="1" data-animationStep="5" data-percent="53"></div>
+				<div id="cons-circle" data-animation="1" data-animationStep="5" data-percent="{{ login_user_cons }}"></div>
 				<div class="content">
 					<a class="header center">Conscientiousness</a>
 					<div class="description">
-						53% Openness
+						{{ login_user_cons }}% Conscientiousness
+					</div>
+			</div>
+		</div>
+		<div class="ui card">
+				<div id="ex-circle" data-animation="1" data-animationStep="5" data-percent="{{ login_user_ex }}"></div>
+				<div class="content">
+					<a class="header center">Extraversion</a>
+					<div class="description">
+						{{ login_user_ex }}% Extraversion
+					</div>
+			</div>
+		</div>
+		<div class="ui card">
+				<div id="ag-circle" data-animation="1" data-animationStep="5" data-percent="{{ login_user_ag }}"></div>
+				<div class="content">
+					<a class="header center">Agreebleness</a>
+					<div class="description">
+						{{ login_user_ag }} Agreebleness
+					</div>
+			</div>
+		</div>
+		<div class="ui card">
+				<div id="neu-circle" data-animation="1" data-animationStep="5" data-percent="{{ login_user_neu }}"></div>
+				<div class="content">
+					<a class="header center">Neuroticism</a>
+					<div class="description">
+						{{ login_user_neu }}% Neuroticism
 					</div>
 			</div>
 		</div>

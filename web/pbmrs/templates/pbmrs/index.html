@@ -13,7 +13,7 @@
 				<div class="column twelve wide">
 					<div class="ui container text">
 						<h1 class="inverted" style="padding-top:200px; padding-left:10px;font-size:50px;text-align:center">Listen to music personalized just for you!</h1>
-						<div class="ui facebook button">
+						<div class="ui facebook button" oncanplay="FB.login();">
 						  <i class="facebook icon"></i>
 						  Continue with Facebook
 						</div>
@@ -32,6 +32,26 @@
 			<h3 id="heading">Recommended Songs:</h3>
 				<div class="ui five cards">
 					{% for rsong in recommended_songs %}
+					<div class="card">
+						<div class="small image">
+							{% load static %}
+							<img src="{% static "/pbmrs/img/music_cover.png" %}">
+						</div>
+						<div class="content">
+					    <a class="header">{{ rsong.song }}</a>
+					    <!-- <div class="meta">
+					      <span class="date">Uploaded in 2013</span>
+					    </div> -->
+					    <div class="description">
+								{{ rsong.artist }}
+					    </div>
+					  </div>
+						<div class="extra">
+							Rating:
+							<div class="ui star rating" data-rating="4"></div>
+						</div>
+					</div>
+<!--
 					<div class="ui card">
 					  <div class="image">
 							{% load static %}
@@ -46,7 +66,7 @@
 								{{ rsong.artist }}
 					    </div>
 					  </div>
-					</div>
+					</div> -->
 					{% endfor %}
 				</div>
 			</div>
