@@ -24,6 +24,9 @@ def get_similar_user_matrix(user_matrix):
 			similarity = (np.sum(user_matrix[i]*user_matrix[j]))/(math.sqrt(np.sum(user_matrix[i]**2)) * math.sqrt(np.sum(user_matrix[j]**2)))
 			user_matrix_dict.update({(i,j):similarity})
 			user_similarity_matrix[i][j] = similarity
+	#similarity[np.isnan(similarity)] = 0
+	#np.set_printoptions(precision=8)
+	user_similarity_matrix = np.nan_to_num(user_similarity_matrix)
 
 	return user_matrix_dict, user_similarity_matrix
 
@@ -89,11 +92,12 @@ class Recommendation():
 		global_baseline_result = self.global_baseline(utility_matrix)[0]
 		temp_matrix = utility_matrix - global_baseline_result
 		normalized_matrix = self.get_normalized_matrix(utility_matrix)[0]
-		similarity_normalized = get_similar_user_matrix(normalized_matrix)[1]
+		#similarity_normalized = get_similar_user_matrix(normalized_matrix)[1]
+		#print(similarity_normalized)
 
 		for i in range(user_similarity_matrix.shape[0]):
 			similar = list(user_similarity_matrix[i])
-			similar_n = list(similarity_normalized[i])
+			#similar_n = list(similarity_normalized[i])
 
 			#print('similar:',similar)
 			music_rating_row = list(utility_matrix[i])
@@ -215,12 +219,12 @@ if __name__=='__main__':
     print("Global Baseline:\n",global_result[:test_rows,:test_cols])
     print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
     
-    latent_result= recommendation.latent_factor(utility_matrix,steps=5000,K=5)
+    latent_result= recommendation.latent_factor(utility_matrix,steps=5000,K=21)
     print("Latent factor:\n",latent_result[:test_rows,:test_cols])
     print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
     
     _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
-    state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=2)
+    state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
     if state:
         print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
         print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
