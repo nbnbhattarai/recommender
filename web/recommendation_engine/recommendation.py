@@ -4,13 +4,6 @@ import math
 import heapq
 import sys
 
-# user_matrix = np.array([
-#             [0.1, 0.2, 0.9, 0.2, 0.9],
-#             [0.3, 0.8, 0.9, 0.2, 0.9],
-#             [0.1, 0.2, 0.9, 0.2, 0.9],
-#             [0.1, 0.2, 0.9, 0.2, 0.9],
-#             [0.1, 0.2, 0.9, 0.2, 0.9],
-#     ])
 
 def get_similar_user_matrix(user_matrix):
 	user_similarity_matrix = np.zeros((user_matrix.shape[0], user_matrix.shape[0]))
@@ -203,7 +196,6 @@ class Recommendation():
 # if __name__=='__main__':
 def main(utility_matrix, user_matrix):
     recommendation = Recommendation()
-    # utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 3, 1],[1, 1, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
     percentage = 35.0/100.0
     test_rows, test_cols = math.ceil(percentage * utility_matrix.shape[0]), math.ceil(percentage * utility_matrix.shape[1])
     # test_rows = test_cols = 1
@@ -215,11 +207,12 @@ def main(utility_matrix, user_matrix):
     _, global_result= recommendation.global_baseline(utility_matrix)
     print("Global Baseline:\n",global_result[:test_rows,:test_cols])
     print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
-	#
+    #RESULT GENERATION PART
+	
     # latent_result= recommendation.latent_factor(utility_matrix,steps=1000,K=21)
     # print("Latent factor:\n",latent_result[:test_rows,:test_cols])
     # print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
-	#
+#
     # _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
     # state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
     # if state:
@@ -249,6 +242,10 @@ def main(utility_matrix, user_matrix):
     # print("Similar users with personality matrix:\n",similar_user_pwise)
     # print("Similar users with avg of both:\n",avg_similar)
     return global_result
+
+
+
+    #TESTING PART ONLY
     # for step in range(1000,10000,500):
     #     result_latent = recommendation.latent_factor(utility_matrix[:],steps=step)
     #     predicted_latent = result_latent[:test_rows, :test_cols]
@@ -337,3 +334,13 @@ def main(utility_matrix, user_matrix):
 	# 		print(l)
 
 	#print(get_k_similar_user_matrix(su_mat, similar_user, k=4))
+if __name__ == "__main__":
+    utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 3, 1],[1, 1, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
+    user_matrix = np.array([
+             [0.1, 0.2, 0.9, 0.2, 0.9],
+             [0.3, 0.8, 0.9, 0.2, 0.9],
+             [0.1, 0.2, 0.9, 0.2, 0.9],
+             [0.1, 0.2, 0.9, 0.2, 0.9],
+             [0.1, 0.2, 0.9, 0.2, 0.9],
+     ])
+    main(utility_matrix,user_matrix)
