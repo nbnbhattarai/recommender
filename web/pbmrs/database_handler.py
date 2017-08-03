@@ -1,5 +1,6 @@
 from .models import UserModel, UserMusicModel, MusicModel, RecommendationModel
 import numpy as np
+import operator
 
 def get_user(fb_id):
     try:
@@ -66,18 +67,35 @@ def get_user_matrix():
 def add_recommendation(utility_matrix):
     all_recommendations = RecommendationModel.objects.all()
     for user_id in range(utility_matrix.shape[0]):
-        i_sorted = sorted(enumerate(utility_matrix[user_id]), key=operator.itemgetter(1), reversed=True)
+        i_sorted = sorted(enumerate(utility_matrix[user_id]), key=operator.itemgetter(1), reverse=True)
         try:
-            user_from_db = UserModel.objects.get(pk=1)
-            recommendation = RecommendationModel.objects.get(user=1)
-            recommendation.music.clear()
-            for i,r in i_sorted:
+            print('inside try')
+            user_from_db = UserModel.objects.get(pk=(user_id+1))
+            print('got user from db')
+            recommendation = RecommendationModel.objects.filter(user=user_from_db).first()
+            if recommendation is not None:
+                recommendation.music.clear()
+            else:
+                recommendation = RecommendationModel(user=user_from_db)
+                print('new recommendation created')
+                recommendation.save()
+                print('new recommendation saved')
+            print('got recommendation from db')
+            print('clear recommendation')
+            for i,r in i_sorted[:10]:
+                if r == 0:
+                    break
+                print('music adding in recommendation')
                 music = get_music_from_id(i+1)
                 recommendation.music.add(music)
-        except:
-            recommendation = RecommendationModel()
-            new_user = get_user_by_id(user_id)
+        except Exception as e:
+            print(e)
+            print('except in add_recommendation')
 
-
-def get_recommendation(user_id):
-    pass
+def get_recommendation(user):
+    try:
+        recommendation_model = RecommendationModel.objects.get(user=user)
+        musics = [music for music in recommendation_model.music.all()]
+    except:
+        print('Exception in get_recommendation')
+    return musics

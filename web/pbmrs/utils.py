@@ -1,6 +1,6 @@
 from personalityClassifier.naivebayes import NaiveBayes
 from .database_handler import get_utility_matrix, get_music_from_id, get_user_matrix
-from recommendation_engine.recommendation import Recommendation, get_similar_user_matrix #, model_evaluation
+from recommendation_engine.recommendation import Recommendation, get_similar_user_matrix
 from .models import SessionModel
 import random, string, operator, math, copy
 
@@ -50,7 +50,7 @@ def get_recommendation(user):
     baseline_result,_ = recommendation.global_baseline(utility_matrix)
     train_rating_matrix_baseline = copy.deepcopy(baseline_result[:test_rows, :test_cols])
     print('baseline_model evaluation: ', model_evaluation(train_rating_matrix_baseline, actual_rating_mat))
-    
+
     collaborative_success, collaborative_result, combined_result = recommendation.collaborative_personality(similar_rating_matrix, utility_matrix)
     train_rating_matrix_cf = copy.deepcopy(collaborative_result[:test_rows, :test_cols])
     print('cf model evaluation: ', model_evaluation(train_rating_matrix_cf, actual_rating_mat))

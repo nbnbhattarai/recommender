@@ -3,17 +3,14 @@ import copy
 import math
 import heapq
 import sys
-sys.path.append("..")
-#from pbmrs import database_handler
 
-
-user_matrix = np.array([
-            [0.1, 0.2, 0.9, 0.2, 0.9],
-            [0.3, 0.8, 0.9, 0.2, 0.9],
-            [0.1, 0.2, 0.9, 0.2, 0.9],
-            [0.1, 0.2, 0.9, 0.2, 0.9],
-            [0.1, 0.2, 0.9, 0.2, 0.9],
-    ])
+# user_matrix = np.array([
+#             [0.1, 0.2, 0.9, 0.2, 0.9],
+#             [0.3, 0.8, 0.9, 0.2, 0.9],
+#             [0.1, 0.2, 0.9, 0.2, 0.9],
+#             [0.1, 0.2, 0.9, 0.2, 0.9],
+#             [0.1, 0.2, 0.9, 0.2, 0.9],
+#     ])
 
 def get_similar_user_matrix(user_matrix):
 	user_similarity_matrix = np.zeros((user_matrix.shape[0], user_matrix.shape[0]))
@@ -87,7 +84,7 @@ class Recommendation():
 	def collaborative_filtering(self, user_similarity_matrix, utility_matrix, k=5):
 
 		#print('usre_matrix:', utility_matrix)
-		
+
 		combined_matrix,cf_matrix = copy.deepcopy(utility_matrix),copy.deepcopy(utility_matrix)
 		global_baseline_result = self.global_baseline(utility_matrix)[0]
 		temp_matrix = utility_matrix - global_baseline_result
@@ -154,7 +151,7 @@ class Recommendation():
 					result = product_sim/sum_sim
 					combined_matrix[i,j] = result
 		return True,cf_matrix, combined_matrix
-        
+
 
 	def latent_factor(self,utility_matrix,K=2,steps=5000,alpha=0.0002,beta=0.02):
 		R = copy.deepcopy(utility_matrix)
@@ -203,10 +200,10 @@ class Recommendation():
 		#print('rmse:', rmse)
 		return rmse
 
-if __name__=='__main__':
-
+# if __name__=='__main__':
+def main(utility_matrix, user_matrix):
     recommendation = Recommendation()
-    utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 3, 1],[1, 1, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
+    # utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 3, 1],[1, 1, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
     percentage = 35.0/100.0
     test_rows, test_cols = math.ceil(percentage * utility_matrix.shape[0]), math.ceil(percentage * utility_matrix.shape[1])
     # test_rows = test_cols = 1
@@ -214,43 +211,44 @@ if __name__=='__main__':
     print('Actual rating mat:\n', actual_rating_mat)
     utility_matrix_2 = copy.deepcopy(utility_matrix)
     utility_matrix[:test_rows, :test_cols] = 0
-    
+
     _, global_result= recommendation.global_baseline(utility_matrix)
     print("Global Baseline:\n",global_result[:test_rows,:test_cols])
     print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
-    
-    latent_result= recommendation.latent_factor(utility_matrix,steps=5000,K=21)
-    print("Latent factor:\n",latent_result[:test_rows,:test_cols])
-    print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
-    
-    _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
-    state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
-    if state:
-        print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
-        print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
-        print("Collaborative & Global with user rating matrix:\n",cf_combined[:test_rows,:test_cols])
-        print("RMSE CF & Global with user rating matrix:",recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat))
-    
-    _,similar_user_pwise = get_similar_user_matrix(user_matrix)
-    state, cf_per, cf_combined_per = recommendation.collaborative_filtering(similar_user_pwise,utility_matrix,k=5)
-    if state:
-        print("Collaborative with personality rating matrix:\n",cf_per[:test_rows,:test_cols])
-        print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_per[:test_rows,:test_cols],actual_rating_mat))
-        print("Collaborative & Global with personality rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
-        print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_combined_per[:test_rows,:test_cols],actual_rating_mat))
-
-    avg_similar = (0.75 * similar_user_rwise + 0.25 * similar_user_pwise)/(0.75+0.25)
-    state, cf_avg, cf_combined_avg = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
-    if state:
-        print("Collaborative with avg rating matrix:\n",cf_per[:test_rows,:test_cols])
-        print("RMSE CF with avg rating matrix:",recommendation.model_evaluation(cf_avg[:test_rows,:test_cols],actual_rating_mat))
-        print("Collaborative & Global with avg rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
-        print("RMSE CF & Global with avg rating matrix:",recommendation.model_evaluation(cf_combined_avg[:test_rows,:test_cols],actual_rating_mat))
-    print("Utitlity matrix:\n ",utility_matrix)
-    print("Normalized matrix:\n",recommendation.get_normalized_matrix(utility_matrix)[1])
-    print("Similar users with rating matrix:\n",similar_user_rwise)
-    print("Similar users with personality matrix:\n",similar_user_pwise)
-    print("Similar users with avg of both:\n",avg_similar)
+	#
+    # latent_result= recommendation.latent_factor(utility_matrix,steps=1000,K=21)
+    # print("Latent factor:\n",latent_result[:test_rows,:test_cols])
+    # print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
+	#
+    # _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
+    # state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
+    # if state:
+    #     print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
+    #     print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
+    #     print("Collaborative & Global with user rating matrix:\n",cf_combined[:test_rows,:test_cols])
+    #     print("RMSE CF & Global with user rating matrix:",recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat))
+	#
+    # _,similar_user_pwise = get_similar_user_matrix(user_matrix)
+    # state, cf_per, cf_combined_per = recommendation.collaborative_filtering(similar_user_pwise,utility_matrix,k=5)
+    # if state:
+    #     print("Collaborative with personality rating matrix:\n",cf_per[:test_rows,:test_cols])
+    #     print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_per[:test_rows,:test_cols],actual_rating_mat))
+    #     print("Collaborative & Global with personality rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
+    #     print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_combined_per[:test_rows,:test_cols],actual_rating_mat))
+	#
+    # avg_similar = (0.75 * similar_user_rwise + 0.25 * similar_user_pwise)/(0.75+0.25)
+    # state, cf_avg, cf_combined_avg = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
+    # if state:
+    #     print("Collaborative with avg rating matrix:\n",cf_per[:test_rows,:test_cols])
+    #     print("RMSE CF with avg rating matrix:",recommendation.model_evaluation(cf_avg[:test_rows,:test_cols],actual_rating_mat))
+    #     print("Collaborative & Global with avg rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
+    #     print("RMSE CF & Global with avg rating matrix:",recommendation.model_evaluation(cf_combined_avg[:test_rows,:test_cols],actual_rating_mat))
+    # print("Utitlity matrix:\n ",utility_matrix)
+    # print("Normalized matrix:\n",recommendation.get_normalized_matrix(utility_matrix)[1])
+    # print("Similar users with rating matrix:\n",similar_user_rwise)
+    # print("Similar users with personality matrix:\n",similar_user_pwise)
+    # print("Similar users with avg of both:\n",avg_similar)
+    return global_result
     # for step in range(1000,10000,500):
     #     result_latent = recommendation.latent_factor(utility_matrix[:],steps=step)
     #     predicted_latent = result_latent[:test_rows, :test_cols]
@@ -280,7 +278,7 @@ if __name__=='__main__':
 	# predicted_baseline = np.array(recommendation.global_baseline(utility_matrix_2))[0][:test_rows, :test_cols]
 	# predicted_latent = result_latent[:test_rows, :test_cols]
 	# if collaborative_success:
-    
+
     # for step in range(1000,10000,500):
     #     result_latent = recommendation.latent_factor(utility_matrix[:],steps=step)
     #     predicted_latent = result_latent[:test_rows, :test_cols]

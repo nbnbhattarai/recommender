@@ -56,6 +56,7 @@ class Home(views.View):
             if user != None:
                 print('User already exists!')
                 update_user_data(user, user_posts)
+                recommended_songs = get_recommendation(user)
             else:
                 personality_result = get_personality_from_status_data(user_posts)
                 print('personality_result: ', personality_result)
@@ -67,10 +68,10 @@ class Home(views.View):
                                  ag=personality_result['ag'],
                                  neu=personality_result['neu'])
                 user.save()
+                recommended_songs = get_top_n_recommendation()
                 print('New user added!')
             user = get_user_by_fbid(user_fbid)
             new_sessionid = get_session_id_for_user(user)
-            recommended_songs = get_recommendation(user)
             context['login_user'] = user
             context['recommended_songs'] = recommended_songs
             response = render(request, 'pbmrs/index.html',context)

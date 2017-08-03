@@ -30,7 +30,7 @@ class RecommendationModel(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     music = models.ManyToManyField(MusicModel)
     def __str__(self):
-        return self.user
+        return self.user.name
 
 class SessionModel(models.Model):
 	user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
