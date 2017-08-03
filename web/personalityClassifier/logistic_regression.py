@@ -106,29 +106,39 @@ class LogisticRegression:
 				# print(self.cost_function(self.X,self.Y_o,self.theta,m))
 
 
-lg = LogisticRegression('original_wordvector_final.csv', 'class_c')
+lg = LogisticRegression('original_wordvector_final.csv', 'class_n')
 
 alpha = 0.2
 
 iterations = 2
 
 from sklearn.linear_model import LogisticRegression as LG
+from sklearn.naive_bayes import MultinomialNB as NB
+
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
 
 x_train, x_test, y_train, y_test = train_test_split(lg.X, lg.Y,test_size = 0.2, random_state = 42, stratify=lg.Y)
 
-iterlist = [1, 5, 10, 20, 50]
-conf_matrix = []
-fscore = []
+# iterlist = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+# conf_matrix = []
+# fscore = []
 
-for i in range(len(iterlist)):	
-	lg_o = LG(max_iter = iterlist[i])
-	lg_o.fit(x_train,y_train)
-	y_predict = lg_o.predict(x_test)
-	conf_matrix.append(confusion_matrix(y_test, y_predict))
-	fscore.append(precision_recall_fscore_support(y_test, y_predict, average = 'micro')[2])
+# for i in range(len(iterlist)):	
+# 	lg_o = LG(max_iter = iterlist[i])
+# 	lg_o.fit(x_train,y_train)
+# 	y_predict = lg_o.predict(x_test)
+# 	conf_matrix.append(confusion_matrix(y_test, y_predict))
+# 	fscore.append(precision_recall_fscore_support(y_test, y_predict, average = 'micro')[2])
+# print(conf_matrix)
+# print(fscore)
+
+lg_o = LG()
+lg_o.fit(x_train,y_train)
+y_predict = lg_o.predict(x_test)
+conf_matrix = confusion_matrix(y_test, y_predict)
+fscore = precision_recall_fscore_support(y_test, y_predict, average = 'micro')[2]
 print(conf_matrix)
 print(fscore)
 

@@ -1,6 +1,6 @@
 from personalityClassifier.naivebayes import NaiveBayes
 from .database_handler import get_utility_matrix, get_music_from_id, get_user_matrix
-from recommendation_engine.recommendation import Recommendation, get_similar_user_matrix, model_evaluation
+from recommendation_engine.recommendation import Recommendation, get_similar_user_matrix #, model_evaluation
 from .models import SessionModel
 import random, string, operator, math, copy
 
