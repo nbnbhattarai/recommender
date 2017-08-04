@@ -3,6 +3,7 @@ import copy
 import math
 import heapq
 import sys
+import operator
 
 
 def get_similar_user_matrix(user_matrix):
@@ -205,38 +206,43 @@ def main(utility_matrix, user_matrix):
     test_rows, test_cols = math.ceil(percentage * utility_matrix.shape[0]), math.ceil(percentage * utility_matrix.shape[1])
     # test_rows = test_cols = 1
     actual_rating_mat = copy.deepcopy(utility_matrix[:test_rows, :test_cols])
-    print('Actual rating mat:\n', actual_rating_mat)
+    #print('Actual rating mat:\n', actual_rating_mat)
     utility_matrix_2 = copy.deepcopy(utility_matrix)
     utility_matrix[:test_rows, :test_cols] = 0
-
+    result = {}
     _, global_result= recommendation.global_baseline(utility_matrix)
-    print("Global Baseline:\n",global_result[:test_rows,:test_cols])
-    print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
+    result.update({'global':recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat)})
+    #print("Global Baseline:\n",global_result[:test_rows,:test_cols])
+    #print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
     #RESULT GENERATION PART
 	
-    # latent_result= recommendation.latent_factor(utility_matrix,steps=1000,K=21)
+    latent_result= recommendation.latent_factor(utility_matrix,steps=1000,K=5)
+    result.update({'latent':recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat)})
     # print("Latent factor:\n",latent_result[:test_rows,:test_cols])
     # print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
 #
-    # _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
-    # state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
-    # if state:
-    #     print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
-    #     print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
-    #     print("Collaborative & Global with user rating matrix:\n",cf_combined[:test_rows,:test_cols])
-    #     print("RMSE CF & Global with user rating matrix:",recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat))
+    _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
+    state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
+    if state:
+        result.update({'cf':recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat),'cf_combined':recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat)})
+        #print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
+        #print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
+        #print("Collaborative & Global with user rating matrix:\n",cf_combined[:test_rows,:test_cols])
+        #print("RMSE CF & Global with user rating matrix:",recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat))
 	#
-    # _,similar_user_pwise = get_similar_user_matrix(user_matrix)
-    # state, cf_per, cf_combined_per = recommendation.collaborative_filtering(similar_user_pwise,utility_matrix,k=5)
-    # if state:
-    #     print("Collaborative with personality rating matrix:\n",cf_per[:test_rows,:test_cols])
+    _,similar_user_pwise = get_similar_user_matrix(user_matrix)
+    state, cf_per, cf_combined_per = recommendation.collaborative_filtering(similar_user_pwise,utility_matrix,k=5)
+    if state:
+        result.update({'cf_per':recommendation.model_evaluation(cf_per[:test_rows,:test_cols],actual_rating_mat),'cf_combined_per':recommendation.model_evaluation(cf_combined_per[:test_rows,:test_cols],actual_rating_mat)})
+    #    print("Collaborative with personality rating matrix:\n",cf_per[:test_rows,:test_cols])
     #     print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_per[:test_rows,:test_cols],actual_rating_mat))
     #     print("Collaborative & Global with personality rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
     #     print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_combined_per[:test_rows,:test_cols],actual_rating_mat))
 	#
-    # avg_similar = (0.75 * similar_user_rwise + 0.25 * similar_user_pwise)/(0.75+0.25)
-    # state, cf_avg, cf_combined_avg = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
-    # if state:
+    avg_similar = (0.75 * similar_user_rwise + 0.25 * similar_user_pwise)/(0.75+0.25)
+    state, cf_avg, cf_combined_avg = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
+    if state:
+        result.update({'cf_avg':recommendation.model_evaluation(cf_avg[:test_rows,:test_cols],actual_rating_mat),'cf_combined_avg':recommendation.model_evaluation(cf_combined_avg[:test_rows,:test_cols],actual_rating_mat)})
     #     print("Collaborative with avg rating matrix:\n",cf_per[:test_rows,:test_cols])
     #     print("RMSE CF with avg rating matrix:",recommendation.model_evaluation(cf_avg[:test_rows,:test_cols],actual_rating_mat))
     #     print("Collaborative & Global with avg rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
@@ -246,7 +252,33 @@ def main(utility_matrix, user_matrix):
     # print("Similar users with rating matrix:\n",similar_user_rwise)
     # print("Similar users with personality matrix:\n",similar_user_pwise)
     # print("Similar users with avg of both:\n",avg_similar)
-    return global_result
+    #print(result)
+    result_t = sorted(result.items(),key=operator.itemgetter(1))
+    print(result_t)
+    if (result_t[0][0]) == 'global':
+       print('global')
+       return global_result 
+    elif (result_t[0][0]) == 'latent':
+       print('latent')
+       return latent_result
+    elif (result_t[0][0]) == 'cf':
+       print('cf')
+       return cf
+    elif (result_t[0][0]) == 'cf_combined':
+       print('cf_combined')
+       return cf_combined
+    elif (result_t[0][0]) == 'cf_per':
+       print('cf_per')
+       return cf_per
+    elif (result_t[0][0]) == 'cf_combined_per':
+       print('cf_combined_per')
+       return cf_combined_per
+    elif (result_t[0][0]) == 'cf_avg':
+       print('cf_avg')
+       return cf_avg
+    elif (result_t[0][0]) == 'cf_combined_avg':
+       print('cf_combined_avg')
+       return cf_combined_avg
 
 
 
