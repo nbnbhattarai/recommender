@@ -4,9 +4,20 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class MusicModel(models.Model):
     artist = models.CharField(max_length=250)
     song = models.CharField(max_length=250)
+    youtube_id = models.CharField(max_length=100)
+    rating_avg = models.DecimalField(max_digits=2,decimal_places=1,default=0.0)
     def __str__(self):
         return self.artist+"-"+self.song
         #return self.artist
+    # def update_rating(self):
+    #     all_user_music = UserMusicModel.objects.filter(music=self)
+    #     sum_r = 0.0
+    #     count = 0.0
+    #     for m in all_user_music:
+    #         count += 1
+    #         sum_r += m.rating
+    #     self.rating_avg = (sum_r/count)
+
 
 class UserModel(models.Model):
     fb_id = models.IntegerField()

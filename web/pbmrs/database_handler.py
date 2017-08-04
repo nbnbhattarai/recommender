@@ -32,7 +32,7 @@ def get_music_from_id(music_id):
     return music
 
 def get_music_rating(Music):
-    all_user_music = UserMusicModel.objects.filter(song=Music)
+    all_user_music = UserMusicModel.objects.filter(music=Music)
     sum_r = 0.0
     count = 0.0
     for m in all_user_music:
@@ -44,8 +44,9 @@ def get_top_music(n):
     all_music = MusicModel.objects.all()
     music_rating = []
     for m in all_music:
-        music_rating.append((m, get_music_rating(m)))
-    return sorted(music_rating, key=operator.itemgetter(1), reversed=True)[:n]
+        music_rating.append((m, m.rating_avg))
+    sorted_result = sorted(music_rating, key=operator.itemgetter(1), reverse=True)
+    return [x for x,r in sorted_result][:n]
 
 def addUser(fb_id, userName, op, cons, ex, ag, neu):
     user = UserModel(fb_id=fb_id, userName=userName, op=op, cons=cons, ex=ex, ag=ag, neu=neu)
@@ -93,6 +94,7 @@ def add_recommendation(utility_matrix):
             print('except in add_recommendation')
 
 def get_recommendation(user):
+    musics = None
     try:
         recommendation_model = RecommendationModel.objects.get(user=user)
         musics = [music for music in recommendation_model.music.all()]

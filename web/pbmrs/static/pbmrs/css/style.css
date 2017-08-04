@@ -1,15 +1,31 @@
+/* partial star */
+.ui.accurate.star.widget {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAcklEQVQoz2P4//8/AzmYgWKN6KC4uFgYhGF8UjTqgjBJGqG2GUOxMF6NQAViQCwFxGpAbICk0QAqBpITw6ZRAUkxLqyA1akENCvg9SNQgRYWTVoEA4cSjTDFalAM5uPVCFTABY0/ASSDBKBiXNRNcqRiADBao1Bj6dJdAAAAAElFTkSuQmCC') repeat scroll 0% 0% transparent;
+  height: 0.875em;
+  width: 10em;
+}
+.ui.accurate.star.widget .highlight {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAdElEQVQoz2P4//8/AzmYgWKN6KC4uDgBhGF8UjQ+AGGSNEJt+w/FCXg1AhUUAHEDEB8A4g9IGj9AxUByBdg0LkBSjAsvwOpUApoX4PUjUMEFLJouEAwcSjTCFB+AYjAfr0agAgNo/AUgGRQAFTOgbpIjFQMAtcfKBD81ItYAAAAASUVORK5CYII=') repeat scroll left bottom transparent;
+  height: 0.875em;
+}
+.ui.accurate.star.widget.inline {
+  display: inline-block;
+  margin-left: 0.3em;
+}
+
+
 /* For trans bg*/
 .landing{
-	/*background-image: url("/static/pbmrs/img/techno.jpg");*/
 	background: url("/static/pbmrs/img/techno.jpg") #103d 70% 30% no-repeat !important;
 }
 
-.landing.segment,.about-page{
+.landing.segment,.about-page,.music-page{
 	min-height: 620px;
 	padding: 0em 0em;
 }
+
 .about-page,.profile-container{
-	padding-top: 50px;
+	padding-top: 30px;
 	padding-bottom: 40px;
 }
 .recommendation_list{

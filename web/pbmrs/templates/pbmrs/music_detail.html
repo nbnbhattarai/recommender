@@ -1,0 +1,87 @@
+{% extends 'pbmrs/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block static_include %}
+  {% load static %}
+  <script src="static 'pbmrs/js/yt.js'"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="https://cdn.rawgit.com/labnol/files/master/yt.js"></script>
+{% endblock static_include %}
+
+{% block body %}
+  <div class="container music-page" style="padding: 100px; padding-top:90px;">
+    <div class="ui two column grid">
+    <!-- <div class="ui two row grid"> -->
+      <div class="row">
+        <div class="column centered">
+          <div data-video="{{ music.youtube_id }}"
+              data-autoplay="0"
+              data-loop="1"
+              id="youtube-audio">
+         </div>
+        </div>
+        <div class="column">
+          <h1>{{ music.song }}</h1>
+          <h3>{{ music.artist }}</h3>
+          <h3>{{ music.rating_avg }}</h3>
+        </div>
+      </div>
+      <div class="row">
+
+      </div>
+    <!-- </div> -->
+  </div>
+  <div class="ui five cards">
+    {% for rsong in recommended_songs %}
+    <div class="card">
+      <!-- <div class="tiny image">
+        {% load static %}
+        <img src="{% static "/pbmrs/img/music_cover.png" %}">
+      </div> -->
+      <div class="content">
+        <a class="header" href="{% url 'song_detail' rsong.youtube_id %}">{{ rsong.song }}</a>
+        <!-- <div class="meta">
+          <span class="date">Uploaded in 2013</span>
+        </div> -->
+        <div class="description">
+          {{ rsong.artist }}
+        </div>
+      </div>
+
+      <div class="extra">
+        <!-- Rating: -->
+        <div class="ui accurate star widget">
+          <div class="highlight" style="width: 50%"></div>
+        </div>
+        {{ rsong.rating_avg }}
+        <!-- <div class="ui star rating" data-rating="{{ rsong.rating }}" ></div> -->
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  </div>
+      <!-- <div class="twelve wide column">
+        <div class="ui items">
+          <div class="item">
+            <div class="image">
+            </div>
+            <div class="content">
+              <a class="header"></a>
+              <div class="meta">
+                <span></span>
+              </div>
+              <div class="meta">
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+		 <iframe id="ytplayer" type="text/html" width="540" height="360" src="https://www.youtube.com/embed/{{ music.youtube_id }}?autoplay=0&frameborder="0"></iframe>
+     <script src="https://cdn.rawgit.com/labnol/files/master/yt.js"></script>
+
+      </div> -->
+  </div>
+ {% endblock body %}

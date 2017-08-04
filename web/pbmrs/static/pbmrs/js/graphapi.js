@@ -32,6 +32,7 @@ function statusChangeCallback(response){
 }
 
 function checkLoginState() {
+  console.log('inside checkLoginState');
   FB.getLoginStatus(function(response) {
     statusChangeCallback(response);
   });
@@ -75,16 +76,16 @@ function testAPI(){
 
 function setElements(isLoggedIn){
 	if(isLoggedIn){
-    document.getElementById('fb-logout-btn').style.display = 'block';
+    // document.getElementById('fb-logout-btn').style.display = 'block';
     // document.getElementById('login-segment').style.display = 'none';
     //document.getElementById('feed').style.display = 'block';
-    document.getElementById('fb-login-btn').style.display = 'none';
+    // document.getElementById('fb-login-btn').style.display = 'none';
     //document.getElementById('heading').style.display = 'none';
 	}else{
-    document.getElementById('fb-logout-btn').style.display = 'none';
+    // document.getElementById('fb-logout-btn').style.display = 'none';
     // document.getElementById('login-segment').style.display = 'block';
     //document.getElementById('feed').style.display = 'none';
-    document.getElementById('fb-login-btn').style.display = 'block';
+    // document.getElementById('fb-login-btn').style.display = 'block';
     //document.getElementById('heading').style.display = 'block';
 	}
 }

@@ -10,6 +10,9 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
 
+		{% block static_include %}
+		{% endblock static_include %}
+
 		{%load static %}
 		<link href="{% static 'pbmrs/css/jquery.circliful.css' %}" rel="stylesheet" type="text/css" />
 
@@ -55,12 +58,15 @@
 					  <div class="right item" style="padding-right:10px;">
 							<div style="padding-right:10px;">
 								<div class="ui transparent inverted icon input" style="padding-right:30px;">
-									<input type="text" placeholder="Search Music...">
-									<i class="search link icon"></i>
+									<form class="search-form" action="." method="get">
+										<input id="search" name="search" type="text" placeholder="Search Music...">
+										<!-- <input type="submit" name="" value=""> -->
+										<i class="search link icon"></i>
+									</form>
 								</div>
 							</div>
 
-							<button class='ui right circular tiny icon button popup-button'><i class="sign in icon"></i></button>
+							<!-- <button class='ui right circular tiny icon button popup-button'><i class="sign in icon"></i></button>
 							<input type="submit" onclick="FB.login()"/>
 							<div class="ui button">Login</div>
 							<div class="ui fluid popup top left transition visible animating scale out">
@@ -73,19 +79,8 @@
 										</fb:login-button>
 									</div>
 							  </div>
-							</div>
+							</div> -->
 
-							<div class="ui flowing popup">
-							  <div class="ui one column divided center aligned grid">
-							    <div class="column">
-										<fb:login-button
-											id="fb-btn"
-											scope="public_profile,user_posts"
-											onlogin="checkLoginState();">
-										</fb:login-button>
-							    </div>
-							  </div>
-							</div>
 							{% if login_user %}
 						  <div class="ui pointing dropdown link item" id="fb-logout-btn" style="padding-right:100px;">
 								{% load static %}
@@ -126,11 +121,6 @@
 				</div>
 			</div>
 		</div>
-		<select name="gender" class="ui dropdown" id="select">
-  <option value="">Gender</option>
-  <option value="male">Male</option>
-  <option value="female">Female</option>
-</select>
 		<div class="container inverted">
 		{% block body %}
 		{% endblock body%}
@@ -140,11 +130,11 @@
 	</body>
 	<script type="text/javascript">
 		$('.ui.dropdown').dropdown();
-		// $('.fb-login-btn').popup({
-		// 	popup : $('.flowing-popup'),
-		// 	on	: 'click',
-		// 	position : 'center'
-		// }
+
+		$('.ui.rating').rating({
+			initialRating: 0,
+	    maxRating: 5
+	  });
 	</script>
 	{% if title == 'profile' %}
 		{% if login_user %}

@@ -7,25 +7,60 @@
 {% block body %}
 	<!-- {% if not login_user %} -->
 	<div class="container">
-		<div class="ui vertical aligned center segment landing inverted segment">
-			<div class="fluid">
+		<div class="ui vertical aligned center segment inverted landing" src="/static/pbmrs/img/techno.jpg">
 				<div class="ui one column stackable center aligned page grid">
 				<div class="column twelve wide">
 					<div class="ui container text">
 						<h1 class="inverted" style="padding-top:200px; padding-left:10px;font-size:50px;text-align:center">Listen to music personalized just for you!</h1>
-						<div class="ui facebook button" oncanplay="FB.login();">
+							<!-- <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"> -->
+							<fb:login-button
+								id="fb-btn"
+								scope="public_profile,user_posts"
+								onlogin="checkLoginState();">
+							</fb:login-button>
+							</div>
+						 <!-- <div class="ui facebook button" oncanplay="FB.login();">
 						  <i class="facebook icon"></i>
 						  Continue with Facebook
-						</div>
+						</div> -->
 					</div>
 			   </div>
-			 </div>
-				</div>
-		</div>
+		 </div>
+	 </div>
 	</div>
 	<!-- {% else %}
 	{% endif %} -->
 	{% if login_user %}
+	{% if search_songs %}
+	<div class="ui container recommendation_list">
+		<div class="sixteen wide column" style="padding:10px;">
+			<h3 id="heading">Search Results for {{ search_query }}:</h3>
+				<div class="ui five cards">
+					{% for ssong in search_songs %}
+					<div class="card">
+						<div class="small image">
+							{% load static %}
+							<img src="{% static "/pbmrs/img/music_cover.png" %}">
+						</div>
+						<div class="content">
+							<a class="header" href="{% url 'song_detail' ssong.youtube_id %}">{{ ssong.song }}</a>
+							<div class="description">
+								{{ ssong.artist }}
+							</div>
+						</div>
+						<div class="extra">
+							<!-- Rating: -->
+							<div class="ui accurate star widget">
+								<div class="highlight" style="width: 50%"></div>
+							</div>
+							{{ ssong.rating_avg }}
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+{% endif %}
 	{% if recommended_songs %}
 	<div class="ui container recommendation_list">
 	  <div class="sixteen wide column" style="padding:10px;">
@@ -38,7 +73,7 @@
 							<img src="{% static "/pbmrs/img/music_cover.png" %}">
 						</div>
 						<div class="content">
-					    <a class="header">{{ rsong.song }}</a>
+					    <a class="header" href="{% url 'song_detail' rsong.youtube_id %}">{{ rsong.song }}</a>
 					    <!-- <div class="meta">
 					      <span class="date">Uploaded in 2013</span>
 					    </div> -->
@@ -46,9 +81,14 @@
 								{{ rsong.artist }}
 					    </div>
 					  </div>
+
 						<div class="extra">
-							Rating:
-							<div class="ui star rating" data-rating="4"></div>
+							<!-- Rating: -->
+							<div class="ui accurate star widget">
+								<div class="highlight" style="width: 50%"></div>
+							</div>
+							{{ rsong.rating_avg }}
+							<!-- <div class="ui star rating" data-rating="{{ rsong.rating }}" ></div> -->
 						</div>
 					</div>
 <!--

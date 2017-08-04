@@ -30,7 +30,7 @@ def update_user_data(user, posts):
     '''
     pass
 
-def get_recommendation(user):
+def get_recommendation_old(user):
     utility_matrix = get_utility_matrix()
     user_matrix = get_user_matrix()
 
@@ -48,33 +48,33 @@ def get_recommendation(user):
     #print('similar_user_matrix row:', similar_user_matrix.shape[0], ' cols: ', similar_user_matrix.shape[1])
     recommendation = Recommendation()
     baseline_result,_ = recommendation.global_baseline(utility_matrix)
-    train_rating_matrix_baseline = copy.deepcopy(baseline_result[:test_rows, :test_cols])
-    print('baseline_model evaluation: ', model_evaluation(train_rating_matrix_baseline, actual_rating_mat))
+    # train_rating_matrix_baseline = copy.deepcopy(baseline_result[:test_rows, :test_cols])
+    # print('baseline_model evaluation: ', model_evaluation(train_rating_matrix_baseline, actual_rating_mat))
 
-    collaborative_success, collaborative_result, combined_result = recommendation.collaborative_personality(similar_rating_matrix, utility_matrix)
-    train_rating_matrix_cf = copy.deepcopy(collaborative_result[:test_rows, :test_cols])
-    print('cf model evaluation: ', model_evaluation(train_rating_matrix_cf, actual_rating_mat))
+    # collaborative_success, collaborative_result, combined_result = recommendation.collaborative_filtering(similar_rating_matrix, utility_matrix)
+    # train_rating_matrix_cf = copy.deepcopy(collaborative_result[:test_rows, :test_cols])
+    # print('cf model evaluation: ', model_evaluation(train_rating_matrix_cf, actual_rating_mat))
 
-    train_rating_matrix_cf_combined = copy.deepcopy(combined_result[:test_rows, :test_cols])
-    print('cf_combined model evaluation: ', model_evaluation(train_rating_matrix_cf_combined, actual_rating_mat))
+    # train_rating_matrix_cf_combined = copy.deepcopy(combined_result[:test_rows, :test_cols])
+    # print('cf_combined model evaluation: ', model_evaluation(train_rating_matrix_cf_combined, actual_rating_mat))
 
-    collaborative_success_u, collaborative_result_u, combined_result_u = recommendation.collaborative_personality(similar_user_matrix, utility_matrix)
-    train_rating_matrix_cf_u = copy.deepcopy(collaborative_result_u[:test_rows, :test_cols])
-    print('cf model evaluation: ', model_evaluation(train_rating_matrix_cf_u, actual_rating_mat))
+    # collaborative_success_u, collaborative_result_u, combined_result_u = recommendation.collaborative_filtering(similar_user_matrix, utility_matrix)
+    # train_rating_matrix_cf_u = copy.deepcopy(collaborative_result_u[:test_rows, :test_cols])
+    # print('cf model evaluation: ', model_evaluation(train_rating_matrix_cf_u, actual_rating_mat))
 
-    train_rating_matrix_cf_combined_u = copy.deepcopy(combined_result_u[:test_rows, :test_cols])
-    print('cf_combined model evaluation: ', model_evaluation(train_rating_matrix_cf_combined_u, actual_rating_mat))
+    # train_rating_matrix_cf_combined_u = copy.deepcopy(combined_result_u[:test_rows, :test_cols])
+    # print('cf_combined model evaluation: ', model_evaluation(train_rating_matrix_cf_combined_u, actual_rating_mat))
 
-    latent_result = recommendation.latent_factor(utility_matrix)
-    train_rating_matrix_latent = copy.deepcopy(latent_result[:test_rows, :test_cols])
-    print('latent_model evaluation: ', model_evaluation(train_rating_matrix_latent, actual_rating_mat))
+    # latent_result = recommendation.latent_factor(utility_matrix)
+    # train_rating_matrix_latent = copy.deepcopy(latent_result[:test_rows, :test_cols])
+    # print('latent_model evaluation: ', model_evaluation(train_rating_matrix_latent, actual_rating_mat))
 
 
 
-    if collaborative_success == None:
-        combined_result,_ = recommendation.global_baseline(utility_matrix)
-    print('success?', collaborative_success, collaborative_result, combined_result)
-    user_row = combined_result[user.pk-1]
+    # if collaborative_success == None:
+    #     combined_result,_ = recommendation.global_baseline(utility_matrix)
+    # print('success?', collaborative_success, collaborative_result, combined_result)
+    user_row = baseline_result[user.pk-1]
     sorted_songs = sorted(enumerate(user_row), key=operator.itemgetter(1), reverse=True)
     songs = []
     count = 0

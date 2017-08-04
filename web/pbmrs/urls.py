@@ -8,4 +8,5 @@ urlpatterns = [
         url(r'^logout$',views.LogOutView.as_view(), name='Logout'),
         url(r'^profile$',views.ProfileView.as_view(), name='profile'),
         url(r'^about$',views.AboutView.as_view(), name='about'),
+        url(r'^song/(?P<music_yid>[\w-]+)/$',views.MusicDetailView.as_view(), name='song_detail'),
 ]
