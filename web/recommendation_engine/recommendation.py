@@ -3,6 +3,7 @@ import copy
 import math
 import heapq
 import sys
+import operator
 
 
 def get_similar_user_matrix(user_matrix):
@@ -35,9 +36,13 @@ class Recommendation():
 		pass
 
 	def global_baseline(self, utility_matrix):
-		system_average = np.average(utility_matrix)
-		user_deviation = system_average - np.mean(utility_matrix, axis=0)
-		music_rating_deviation = system_average - np.mean(utility_matrix, axis=1)
+		#system_average = np.average(utility_matrix)
+		system_average = float(np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean()))
+		#music_rating_deviation = system_average - np.mean(utility_matrix, axis=0)
+		#user_deviation = system_average - np.mean(utility_matrix, axis=1)
+		#user->rows->axis=1, music->cols-axis=0
+		music_rating_deviation = system_average -np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=0)) #- system_average
+		user_deviation = system_average - np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=1)) #- system_average
 
 		utility_matrix_copy = np.zeros(utility_matrix.shape)
 		utility_matrix_2 = copy.deepcopy(utility_matrix)
@@ -46,12 +51,13 @@ class Recommendation():
 		#print(user_deviation)
 		#print(music_rating_deviation)
 
-		for j in range(len(music_rating_deviation)):
-			for i in range(len(user_deviation)):
-				#print('i:', i, 'j:', j)
-				utility_matrix_copy[j][i] = system_average + user_deviation[i] + music_rating_deviation[j]
-				if utility_matrix[j][i] == 0:
-					utility_matrix_2[j][i] = utility_matrix_copy[j][i]
+		for i in range(len(user_deviation)):
+			for j in range(len(music_rating_deviation)):
+				#print(user_deviation[i], music_rating_deviation[j])
+				utility_matrix_copy[i][j] = system_average + user_deviation[i] + music_rating_deviation[j]
+				#print(utility_matrix_copy[i][j])
+				if utility_matrix[i][j] == 0:
+					utility_matrix_2[i][j] = utility_matrix_copy[i][j]
 
 		#print('baseline:',utility_matrix_copy, '\nNext baseline: ', utility_matrix_2)
 		return utility_matrix_copy, utility_matrix_2
@@ -200,38 +206,43 @@ def main(utility_matrix, user_matrix):
     test_rows, test_cols = math.ceil(percentage * utility_matrix.shape[0]), math.ceil(percentage * utility_matrix.shape[1])
     # test_rows = test_cols = 1
     actual_rating_mat = copy.deepcopy(utility_matrix[:test_rows, :test_cols])
-    print('Actual rating mat:\n', actual_rating_mat)
+    #print('Actual rating mat:\n', actual_rating_mat)
     utility_matrix_2 = copy.deepcopy(utility_matrix)
     utility_matrix[:test_rows, :test_cols] = 0
-
+    result = {}
     _, global_result= recommendation.global_baseline(utility_matrix)
-    print("Global Baseline:\n",global_result[:test_rows,:test_cols])
-    print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
+    result.update({'global':recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat)})
+    #print("Global Baseline:\n",global_result[:test_rows,:test_cols])
+    #print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
     #RESULT GENERATION PART
 	
-    # latent_result= recommendation.latent_factor(utility_matrix,steps=1000,K=21)
+    latent_result= recommendation.latent_factor(utility_matrix,steps=1000,K=5)
+    result.update({'latent':recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat)})
     # print("Latent factor:\n",latent_result[:test_rows,:test_cols])
     # print("RMSE Latent factor:",recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat))
 #
-    # _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
-    # state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
-    # if state:
-    #     print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
-    #     print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
-    #     print("Collaborative & Global with user rating matrix:\n",cf_combined[:test_rows,:test_cols])
-    #     print("RMSE CF & Global with user rating matrix:",recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat))
+    _,similar_user_rwise = get_similar_user_matrix(utility_matrix_2)
+    state, cf, cf_combined = recommendation.collaborative_filtering(similar_user_rwise,utility_matrix,k=5)
+    if state:
+        result.update({'cf':recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat),'cf_combined':recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat)})
+        #print("Collaborative with user rating matrix:\n",cf[:test_rows,:test_cols])
+        #print("RMSE CF with user rating matrix:",recommendation.model_evaluation(cf[:test_rows,:test_cols],actual_rating_mat))
+        #print("Collaborative & Global with user rating matrix:\n",cf_combined[:test_rows,:test_cols])
+        #print("RMSE CF & Global with user rating matrix:",recommendation.model_evaluation(cf_combined[:test_rows,:test_cols],actual_rating_mat))
 	#
-    # _,similar_user_pwise = get_similar_user_matrix(user_matrix)
-    # state, cf_per, cf_combined_per = recommendation.collaborative_filtering(similar_user_pwise,utility_matrix,k=5)
-    # if state:
-    #     print("Collaborative with personality rating matrix:\n",cf_per[:test_rows,:test_cols])
+    _,similar_user_pwise = get_similar_user_matrix(user_matrix)
+    state, cf_per, cf_combined_per = recommendation.collaborative_filtering(similar_user_pwise,utility_matrix,k=5)
+    if state:
+        result.update({'cf_per':recommendation.model_evaluation(cf_per[:test_rows,:test_cols],actual_rating_mat),'cf_combined_per':recommendation.model_evaluation(cf_combined_per[:test_rows,:test_cols],actual_rating_mat)})
+    #    print("Collaborative with personality rating matrix:\n",cf_per[:test_rows,:test_cols])
     #     print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_per[:test_rows,:test_cols],actual_rating_mat))
     #     print("Collaborative & Global with personality rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
     #     print("RMSE CF & Global with personality rating matrix:",recommendation.model_evaluation(cf_combined_per[:test_rows,:test_cols],actual_rating_mat))
 	#
-    # avg_similar = (0.75 * similar_user_rwise + 0.25 * similar_user_pwise)/(0.75+0.25)
-    # state, cf_avg, cf_combined_avg = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
-    # if state:
+    avg_similar = (0.75 * similar_user_rwise + 0.25 * similar_user_pwise)/(0.75+0.25)
+    state, cf_avg, cf_combined_avg = recommendation.collaborative_filtering(avg_similar,utility_matrix,k=5)
+    if state:
+        result.update({'cf_avg':recommendation.model_evaluation(cf_avg[:test_rows,:test_cols],actual_rating_mat),'cf_combined_avg':recommendation.model_evaluation(cf_combined_avg[:test_rows,:test_cols],actual_rating_mat)})
     #     print("Collaborative with avg rating matrix:\n",cf_per[:test_rows,:test_cols])
     #     print("RMSE CF with avg rating matrix:",recommendation.model_evaluation(cf_avg[:test_rows,:test_cols],actual_rating_mat))
     #     print("Collaborative & Global with avg rating matrix:\n",cf_combined_per[:test_rows,:test_cols])
@@ -241,11 +252,37 @@ def main(utility_matrix, user_matrix):
     # print("Similar users with rating matrix:\n",similar_user_rwise)
     # print("Similar users with personality matrix:\n",similar_user_pwise)
     # print("Similar users with avg of both:\n",avg_similar)
-    return global_result
+    #print(result)
+    result_t = sorted(result.items(),key=operator.itemgetter(1))
+    print(result_t)
+    if (result_t[0][0]) == 'global':
+       print('global')
+       return global_result 
+    elif (result_t[0][0]) == 'latent':
+       print('latent')
+       return latent_result
+    elif (result_t[0][0]) == 'cf':
+       print('cf')
+       return cf
+    elif (result_t[0][0]) == 'cf_combined':
+       print('cf_combined')
+       return cf_combined
+    elif (result_t[0][0]) == 'cf_per':
+       print('cf_per')
+       return cf_per
+    elif (result_t[0][0]) == 'cf_combined_per':
+       print('cf_combined_per')
+       return cf_combined_per
+    elif (result_t[0][0]) == 'cf_avg':
+       print('cf_avg')
+       return cf_avg
+    elif (result_t[0][0]) == 'cf_combined_avg':
+       print('cf_combined_avg')
+       return cf_combined_avg
 
 
 
-    #TESTING PART ONLY
+    #TESTING PART DURING CODING.
     # for step in range(1000,10000,500):
     #     result_latent = recommendation.latent_factor(utility_matrix[:],steps=step)
     #     predicted_latent = result_latent[:test_rows, :test_cols]
@@ -335,7 +372,7 @@ def main(utility_matrix, user_matrix):
 
 	#print(get_k_similar_user_matrix(su_mat, similar_user, k=4))
 if __name__ == "__main__":
-    utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 3, 1],[1, 1, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
+    utility_matrix = np.array([[5.0, 3, 0, 1],[2, 4, 3, 1],[1, 3, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
     user_matrix = np.array([
              [0.1, 0.2, 0.9, 0.2, 0.9],
              [0.3, 0.8, 0.9, 0.2, 0.9],
