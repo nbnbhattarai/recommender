@@ -35,12 +35,13 @@ class Recommendation():
 		pass
 
 	def global_baseline(self, utility_matrix):
-		system_average = np.average(utility_matrix)
-		music_rating_deviation = system_average - np.mean(utility_matrix, axis=0)
-		user_deviation = system_average - np.mean(utility_matrix, axis=1)
+		#system_average = np.average(utility_matrix)
+		system_average = float(np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean()))
+		#music_rating_deviation = system_average - np.mean(utility_matrix, axis=0)
+		#user_deviation = system_average - np.mean(utility_matrix, axis=1)
 		#user->rows->axis=1, music->cols-axis=0
-		#music_rating_deviation = system_average -np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=0)) #- system_average
-		#user_deviation = system_average - np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=1)) #- system_average
+		music_rating_deviation = system_average -np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=0)) #- system_average
+		user_deviation = system_average - np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=1)) #- system_average
 
 		utility_matrix_copy = np.zeros(utility_matrix.shape)
 		utility_matrix_2 = copy.deepcopy(utility_matrix)
