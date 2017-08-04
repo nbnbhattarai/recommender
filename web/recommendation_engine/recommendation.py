@@ -38,19 +38,22 @@ class Recommendation():
 		system_average = np.average(utility_matrix)
 		music_rating_deviation = system_average - np.mean(utility_matrix, axis=0)
 		user_deviation = system_average - np.mean(utility_matrix, axis=1)
+		#user->rows->axis=1, music->cols-axis=0
+		#music_rating_deviation = system_average -np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=0)) #- system_average
+		#user_deviation = system_average - np.ma.getdata(np.ma.masked_equal(utility_matrix,0).mean(axis=1)) #- system_average
 
 		utility_matrix_copy = np.zeros(utility_matrix.shape)
 		utility_matrix_2 = copy.deepcopy(utility_matrix)
-		print(utility_matrix_copy)
-		print(system_average)
-		print(user_deviation)
-		print(music_rating_deviation)
+		#print(utility_matrix_copy)
+		#print(system_average)
+		#print(user_deviation)
+		#print(music_rating_deviation)
 
 		for i in range(len(user_deviation)):
 			for j in range(len(music_rating_deviation)):
-				print(user_deviation[i], music_rating_deviation[j])
+				#print(user_deviation[i], music_rating_deviation[j])
 				utility_matrix_copy[i][j] = system_average + user_deviation[i] + music_rating_deviation[j]
-				print(utility_matrix_copy[i][j])
+				#print(utility_matrix_copy[i][j])
 				if utility_matrix[i][j] == 0:
 					utility_matrix_2[i][j] = utility_matrix_copy[i][j]
 
