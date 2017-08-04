@@ -36,22 +36,23 @@ class Recommendation():
 
 	def global_baseline(self, utility_matrix):
 		system_average = np.average(utility_matrix)
-		user_deviation = system_average - np.mean(utility_matrix, axis=0)
-		music_rating_deviation = system_average - np.mean(utility_matrix, axis=1)
+		music_rating_deviation = system_average - np.mean(utility_matrix, axis=0)
+		user_deviation = system_average - np.mean(utility_matrix, axis=1)
 
 		utility_matrix_copy = np.zeros(utility_matrix.shape)
 		utility_matrix_2 = copy.deepcopy(utility_matrix)
-		#print(utility_matrix_copy)
-		#print(system_average)
-		#print(user_deviation)
-		#print(music_rating_deviation)
+		print(utility_matrix_copy)
+		print(system_average)
+		print(user_deviation)
+		print(music_rating_deviation)
 
-		for j in range(len(music_rating_deviation)):
-			for i in range(len(user_deviation)):
-				#print('i:', i, 'j:', j)
-				utility_matrix_copy[j][i] = system_average + user_deviation[i] + music_rating_deviation[j]
-				if utility_matrix[j][i] == 0:
-					utility_matrix_2[j][i] = utility_matrix_copy[j][i]
+		for i in range(len(user_deviation)):
+			for j in range(len(music_rating_deviation)):
+				print(user_deviation[i], music_rating_deviation[j])
+				utility_matrix_copy[i][j] = system_average + user_deviation[i] + music_rating_deviation[j]
+				print(utility_matrix_copy[i][j])
+				if utility_matrix[i][j] == 0:
+					utility_matrix_2[i][j] = utility_matrix_copy[i][j]
 
 		#print('baseline:',utility_matrix_copy, '\nNext baseline: ', utility_matrix_2)
 		return utility_matrix_copy, utility_matrix_2
@@ -245,7 +246,7 @@ def main(utility_matrix, user_matrix):
 
 
 
-    #TESTING PART ONLY
+    #TESTING PART DURING CODING.
     # for step in range(1000,10000,500):
     #     result_latent = recommendation.latent_factor(utility_matrix[:],steps=step)
     #     predicted_latent = result_latent[:test_rows, :test_cols]
@@ -335,7 +336,7 @@ def main(utility_matrix, user_matrix):
 
 	#print(get_k_similar_user_matrix(su_mat, similar_user, k=4))
 if __name__ == "__main__":
-    utility_matrix = np.array([[5.0, 3, 0, 1],[2, 3, 3, 1],[1, 1, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
+    utility_matrix = np.array([[5.0, 3, 0, 1],[2, 4, 3, 1],[1, 3, 0, 5], [1, 2, 4, 4],[2, 1, 1, 4]])
     user_matrix = np.array([
              [0.1, 0.2, 0.9, 0.2, 0.9],
              [0.3, 0.8, 0.9, 0.2, 0.9],
