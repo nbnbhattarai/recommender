@@ -215,7 +215,7 @@ def main(utility_matrix, user_matrix):
     #print("Global Baseline:\n",global_result[:test_rows,:test_cols])
     #print("RMSE Global Baseline:",recommendation.model_evaluation(global_result[:test_rows,:test_cols],actual_rating_mat))
     #RESULT GENERATION PART
-	
+
     latent_result= recommendation.latent_factor(utility_matrix,steps=1000,K=5)
     result.update({'latent':recommendation.model_evaluation(latent_result[:test_rows,:test_cols],actual_rating_mat)})
     # print("Latent factor:\n",latent_result[:test_rows,:test_cols])
@@ -257,7 +257,7 @@ def main(utility_matrix, user_matrix):
     print(result_t)
     if (result_t[0][0]) == 'global':
        print('global')
-       return global_result 
+       return global_result
     elif (result_t[0][0]) == 'latent':
        print('latent')
        return latent_result
@@ -279,8 +279,6 @@ def main(utility_matrix, user_matrix):
     elif (result_t[0][0]) == 'cf_combined_avg':
        print('cf_combined_avg')
        return cf_combined_avg
-
-
 
     #TESTING PART DURING CODING.
     # for step in range(1000,10000,500):
