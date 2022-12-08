@@ -1,6 +1,6 @@
 bkcharts==0.2
 bokeh==0.12.6
-certifi==2017.7.27.1
+certifi==2022.12.7
 chardet==3.0.4
 dill==0.2.6
 Django==1.11.28
